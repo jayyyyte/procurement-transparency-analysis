@@ -1,0 +1,11 @@
+# Thư viện ngoài dùng trong project (pin version đã kiểm thử, Python 3.11+; đã chạy trên 3.14)
+requests==2.34.2          # HTTP client cho crawler
+PyYAML==6.0.3             # đọc config/config.yaml
+numpy==2.5.3
+pandas==3.0.6             # cleaning, integrate, EDA
+pyarrow==25.0.1           # lưu trữ Parquet
+scikit-learn==1.9.1       # Linear Regression, Random Forest, Isolation Forest, LOF, K-means
+lightgbm==4.7.0           # Gradient Boosting (§7.1); thiếu thì tự dùng HistGradientBoosting của sklearn
+matplotlib==3.11.2        # biểu đồ
+networkx==3.7             # (optional) network analysis bên mời thầu - nhà thầu
+pytest==9.1.1             # unit test
