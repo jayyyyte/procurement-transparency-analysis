@@ -2,7 +2,7 @@ import numpy as np
 import pandas as pd
 import pytest
 
-from src.clean.normalize import ProvinceMapper, hinh_thuc_nhom, parse_money
+from src.clean.normalize import ProvinceMapper, dau_hieu_von_vay, hinh_thuc_nhom, parse_money
 from src.config import PROJECT_ROOT
 
 
@@ -54,3 +54,16 @@ def test_hinh_thuc_nhom():
     assert hinh_thuc_nhom("DTRR") == "Cạnh tranh"
     assert hinh_thuc_nhom("CDTRG") == "Chỉ định thầu"
     assert hinh_thuc_nhom("TTH") == "Khác"
+
+
+@pytest.mark.parametrize("texts,expected", [
+    (("Dự án cải thiện hạ tầng đô thị sử dụng vốn vay ODA của Nhật Bản", None), True),
+    (("Dự án phát triển giao thông", "Gói XL-01 (vốn vay Ngân hàng Thế giới)"), True),
+    (("Cao tốc Bắc - Nam từ nguồn trái phiếu Chính phủ", ""), True),
+    (("Dự án ADB - Chương trình nước sạch", None), True),
+    (("Cung cấp sữa bán trú cho trường mầm non", "Gói 01"), False),
+    (("Xây dựng trường học", "Gói Kodak adbc"), False),  # không khớp giữa từ
+    ((None, None), False),
+])
+def test_dau_hieu_von_vay(texts, expected):
+    assert dau_hieu_von_vay(*texts) is expected

@@ -94,7 +94,10 @@ Thời gian ước tính ở 1 request/2s, 10 bản ghi/request, 1 tiến trình
   - (c) 36 tháng với S3, khoảng 3,9 ngày.
 
   Requirements không cho Claude Code tự cắt scope.
-- **D3 — Định nghĩa "vốn ngân sách nhà nước":** API danh sách không có field nguồn vốn. Mặc định dùng proxy `planType ∈ {DTPT, TX, DTMS}` và loại `KHAC` (~18% mẫu). Chấp nhận proxy này, hay cần recon API chi tiết để lấy nguồn vốn thật?
+- **D3 — Định nghĩa "vốn ngân sách nhà nước":** ✅ **Nhóm đã chốt (27/09/2026):** dùng proxy `planType ∈ {DTPT, TX, DTMS}`, loại `KHAC` (~18% mẫu), không recon API chi tiết.
+  - DTPT là đầu tư công, đã gồm mọi nguồn cân đối qua NSNN (NS trung ương, địa phương, trái phiếu Chính phủ, vốn vay ODA). TX/DTMS là chi thường xuyên NSNN, giữ lại để dataset lớn hơn; `plan_type` là feature của model.
+  - `KHAC` trong mẫu chủ yếu là vốn tự có của DNNN (điện lực, BIDV, cảng, PV Gas) và nguồn xã hội hoá ở trường học, nên loại.
+  - Giới hạn: không tách được gói ODA/TPCP khỏi DTPT. Cột heuristic `dau_hieu_von_vay` (theo từ khoá tên) dùng cho phân tích độ nhạy.
 - **D4 — `thoi_gian_thuc_hien_hop_dong`:** bỏ field này (§7.1 liệt kê nó là feature), hay R1/R2 recon API chi tiết bằng DevTools? Nếu recon, mỗi gói thêm 1 request, tức khoảng 2–3 triệu request, **gấp ~6 lần** thời gian crawl. Đề xuất: bỏ, hoặc chỉ lấy cho một mẫu nhỏ.
 - **D5:** điền email liên hệ của team vào `crawl.user_agent` trước khi chạy.
 

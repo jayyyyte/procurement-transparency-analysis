@@ -8,7 +8,7 @@
 
 ## 1. Project Overview
 
-Xây dựng pipeline end-to-end: crawl dữ liệu đấu thầu công khai từ Hệ thống mạng đấu thầu quốc gia (`muasamcong.mpi.gov.vn`), làm sạch & tích hợp thành dataset có cấu trúc, phân tích khám phá (EDA), và xây model dự đoán/anomaly detection trên các gói thầu sử dụng vốn ngân sách nhà nước.
+Xây dựng pipeline end-to-end: crawl dữ liệu đấu thầu công khai từ Hệ thống mạng đấu thầu quốc gia (`muasamcong.mpi.gov.vn`), làm sạch & tích hợp thành dataset có cấu trúc, phân tích khám phá (EDA), và xây model dự đoán/anomaly detection trên các gói thầu sử dụng vốn ngân sách nhà nước (NSNN) — gồm chi đầu tư công và chi thường xuyên, xem mục 3.5.
 
 **Ràng buộc bắt buộc của môn học (không thương lượng):**
 - Dữ liệu phải tự crawl, **không được dùng dataset có sẵn** (Kaggle, data.gov, v.v.)
@@ -23,7 +23,7 @@ Xây dựng pipeline end-to-end: crawl dữ liệu đấu thầu công khai từ
   - **TBMT** — Thông báo mời thầu
   - **KHLCNT** — Kế hoạch lựa chọn nhà thầu
   - **KQLCNT** — Kết quả lựa chọn nhà thầu
-- Phạm vi: toàn quốc, tất cả lĩnh vực, **chỉ gói thầu nguồn vốn ngân sách nhà nước** (đầu tư công), khoảng thời gian **3-4 năm gần nhất** (mặc định: 2022-09 → 2026-09, để cấu hình được qua tham số, không hard-code) — kéo dài để có dữ liệu lớn hơn cho phân tích trend & modeling
+- Phạm vi: toàn quốc, tất cả lĩnh vực, **gói thầu dùng vốn ngân sách nhà nước** (đầu tư công + chi thường xuyên, định nghĩa ở mục 3.5), khoảng thời gian **3-4 năm gần nhất** (mặc định: 2022-09 → 2026-09, để cấu hình được qua tham số, không hard-code) — kéo dài để có dữ liệu lớn hơn cho phân tích trend & modeling
 - Data cleaning, chuẩn hoá, join 3 nguồn theo mã gói thầu/mã dự án
 - EDA + visualization
 - Modeling: (a) dự đoán giá trúng thầu / % tiết kiệm so với giá gói thầu (regression), (b) phát hiện gói thầu có tín hiệu bất thường về cạnh tranh (anomaly/rule-based scoring) — chi tiết thuật toán ở mục 7
@@ -34,6 +34,7 @@ Xây dựng pipeline end-to-end: crawl dữ liệu đấu thầu công khai từ
 - Không thực hiện bất kỳ hành động nào có thể vi phạm ToS/pháp luật (không bypass CAPTCHA nếu có, không login giả mạo)
 - Không đưa ra kết luận buộc tội/gian lận — chỉ báo cáo dưới dạng "tín hiệu bất thường về mặt thống kê"
 - Dashboard/web app thời gian thực — output là notebook/script + report, không phải sản phẩm production
+- Gói thầu dùng vốn tự có của doanh nghiệp nhà nước hoặc nguồn xã hội hoá (loại kế hoạch KHAC), vốn tư nhân, dự án PPP và lựa chọn nhà đầu tư. Gói vốn vay ODA / trái phiếu Chính phủ **không** bị loại riêng (chúng thuộc NSNN, xem mục 3.5)
 
 ### 2.3 Phased Delivery Plan — **quan trọng, có gate giữa các phase**
 
@@ -78,7 +79,7 @@ Xây dựng pipeline end-to-end: crawl dữ liệu đấu thầu công khai từ
 | `ben_moi_thau` | TBMT, KQLCNT | |
 | `tinh_thanh` | Suy ra từ địa chỉ bên mời thầu hoặc field trực tiếp nếu có | |
 | `linh_vuc` | TBMT/KHLCNT | Xây lắp/Hàng hóa/Tư vấn/Phi tư vấn/Hỗn hợp |
-| `nguon_von` | KHLCNT | **Lọc = ngân sách nhà nước** |
+| `nguon_von` | KHLCNT | API không có field này → proxy `planType`. **Lọc giữ DTPT, TX, DTMS; loại KHAC** (mục 3.5) |
 | `hinh_thuc_lua_chon_nha_thau` | TBMT | Đấu thầu rộng rãi/Chỉ định thầu/Chào hàng cạnh tranh/... |
 | `gia_goi_thau` | KHLCNT | |
 | `gia_trung_thau` | KQLCNT | |
@@ -92,7 +93,13 @@ Xây dựng pipeline end-to-end: crawl dữ liệu đấu thầu công khai từ
 - Thời gian: 3-4 năm gần nhất (mặc định 48 tháng tính từ ngày chạy crawler — **để config qua CLI arg/config file**, không hard-code ngày)
 - Địa lý: toàn quốc
 - Lĩnh vực: tất cả
-- Nguồn vốn: **chỉ giữ gói thầu có nguồn vốn = ngân sách nhà nước** (loại bỏ vốn ODA/tư nhân nếu lẫn vào)
+- Nguồn vốn: **giữ gói thầu dùng vốn ngân sách nhà nước**, cả chi đầu tư lẫn chi thường xuyên (đã chốt ở gate Phase 0, quyết định D3):
+  - API danh sách không có field nguồn vốn, nên dùng loại kế hoạch `planType` của KHLCNT làm proxy.
+  - **DTPT** (đầu tư phát triển) = đầu tư công theo nghĩa hẹp. Gồm mọi nguồn cân đối qua NSNN: ngân sách trung ương, ngân sách địa phương, trái phiếu Chính phủ, vốn vay ODA / vay ưu đãi (các khoản Nhà nước vay được hạch toán vào NSNN).
+  - **TX** (chi thường xuyên) và **DTMS** (dự toán mua sắm) = chi thường xuyên của NSNN, không phải đầu tư công nhưng vẫn là tiền ngân sách và vẫn đấu thầu công khai. Giữ lại để dataset lớn hơn; `plan_type` là feature của model nên model vẫn phân biệt được hai nhóm.
+  - **KHAC**: loại. Mẫu Phase 0 cho thấy nhóm này chủ yếu là vốn tự có của doanh nghiệp nhà nước (điện lực, ngân hàng, cảng) và nguồn xã hội hoá ở trường học (sữa bán trú, căn tin).
+  - "Đầu tư công" trong tên đề tài được hiểu theo nghĩa rộng là đấu thầu dùng vốn NSNN. Muốn chỉ lấy đầu tư công nghĩa hẹp: đặt `clean.nsnn_plan_types: [DTPT]`.
+  - **Giới hạn đã biết:** không tách được gói vốn vay ODA / trái phiếu khỏi DTPT vì thiếu field nguồn vốn. Cột heuristic `dau_hieu_von_vay` (từ khoá ODA, vốn vay, WB, ADB, JICA, trái phiếu… trong tên dự án/gói thầu) dùng cho EDA và phân tích độ nhạy, không dùng để lọc. Gói ODA áp dụng quy định đấu thầu của nhà tài trợ có thể không được đăng trên hệ thống.
 
 > ⚠️ Lưu ý volume: toàn quốc + tất cả lĩnh vực + 36-48 tháng + 3 loại thông tin nhiều khả năng ra **hàng trăm nghìn đến cả triệu record** — lớn hơn đáng kể so với bản trước. Nếu Phase 0 cho thấy tốc độ crawl quá chậm để hoàn thành trong timeline, **báo cáo lại thay vì tự ý cắt giảm scope** — đây là quyết định cần thảo luận với chủ dự án. Với volume này, cân nhắc ưu tiên phương án lưu trữ dạng Parquet + xử lý bằng PySpark ngay từ Phase 1 thay vì để tới lúc pandas không kham nổi.
 
@@ -101,7 +108,7 @@ Xây dựng pipeline end-to-end: crawl dữ liệu đấu thầu công khai từ
 ## 4. Functional Requirements
 
 **FR-1 — Crawler module**
-- Input: danh sách category cần crawl (TBMT/KHLCNT/KQLCNT), khoảng thời gian, có thể filter theo nguồn vốn nếu site hỗ trợ filter server-side (ưu tiên hơn filter client-side để giảm tải)
+- Input: danh sách category cần crawl (TBMT/KHLCNT/KQLCNT), khoảng thời gian. Site không hỗ trợ filter nguồn vốn server-side (Phase 0), nên lọc NSNN làm ở bước clean
 - Output: raw HTML lưu lại (bắt buộc — để không phải crawl lại khi đổi logic parse) + file log (số request, lỗi, retry)
 - Cơ chế: rate limiting cấu hình được (mặc định thận trọng, vd 1 request/1-2s), retry với backoff, resumable (lưu checkpoint để chạy lại không crawl trùng)
 - Tôn trọng `robots.txt` của domain
@@ -165,7 +172,7 @@ Tiêu chí chấm điểm capstone bao gồm "sự phù hợp & chất lượng 
 | Random Forest Regressor | Model chính | Xử lý tốt quan hệ phi tuyến, categorical feature |
 | Gradient Boosting (XGBoost/LightGBM) | Model nâng cao (optional nếu còn thời gian) | Thường cho kết quả tốt hơn Random Forest trên tabular data |
 
-- **Input features:** lĩnh vực, giá gói thầu, tỉnh/thành, hình thức lựa chọn nhà thầu, nguồn vốn, thời gian thực hiện hợp đồng
+- **Input features:** lĩnh vực, giá gói thầu, tỉnh/thành, hình thức lựa chọn nhà thầu, nguồn vốn (proxy: loại kế hoạch DTPT/TX/DTMS), thời gian thực hiện hợp đồng
 - **Metric so sánh:** RMSE, MAE, R² trên tập test (train/test split hoặc k-fold cross-validation) — trình bày bảng so sánh 3 model cạnh nhau
 - **Feature importance** (từ Random Forest/Gradient Boosting) dùng để giải thích yếu tố ảnh hưởng giá trúng thầu — có giá trị cho phần "kết luận mới" trong written report
 

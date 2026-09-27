@@ -35,6 +35,15 @@ DIRECT_FORMS = {"CDT", "CDTRG"}
 
 PLAN_TYPE = {"DTPT": "Đầu tư phát triển", "TX": "Chi thường xuyên", "DTMS": "Dự toán mua sắm", "KHAC": "Khác"}
 
+# API không có field nguồn vốn: gói vốn vay (ODA, vay ưu đãi, trái phiếu) nằm lẫn trong DTPT.
+# Cờ heuristic theo từ khoá trong tên dự án / gói thầu — chỉ dùng cho EDA & phân tích độ nhạy, không dùng để lọc.
+_VON_VAY = re.compile(r"\b(oda|von vay|vay uu dai|trai phieu|world bank|wb|ngan hang the gioi|adb"
+                      r"|ngan hang phat trien chau a|jica|kfw|aiib|koica|edcf)\b")
+
+
+def dau_hieu_von_vay(*texts: object) -> bool:
+    return any(_VON_VAY.search(norm_key(t)) for t in texts if t is not None)
+
 
 def to_datetime(s: pd.Series) -> pd.Series:
     """API timestamps are local Vietnam time (UTC+7) without offset; kept naive."""

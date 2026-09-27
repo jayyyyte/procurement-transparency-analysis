@@ -66,6 +66,7 @@ def write_report(df: pd.DataFrame, stats: dict, cfg, mode: str) -> str:
         f"| Tỉ lệ join được KHLCNT theo `ma_khlcnt` | {100 * stats['join_rate']:.1f}% |",
         f"| Bị loại vì không phải NSNN (proxy planType) | {stats['non_nsnn_removed']:,} {stats['non_nsnn_by_type']} |",
         f"| **Gói thầu cuối cùng** | **{stats['packages']:,}** |",
+        f"| Trong đó có dấu hiệu vốn vay (ODA/TPCP, theo từ khoá tên) | {stats.get('dau_hieu_von_vay', 0):,} |",
         f"| Trong đó đã có kết quả (giá trúng) | {int(df['co_ket_qua'].sum()):,} |",
         "",
         "## % thiếu theo field (schema §3.4)",
@@ -83,7 +84,10 @@ def write_report(df: pd.DataFrame, stats: dict, cfg, mode: str) -> str:
         "## Ghi chú",
         "",
         "- `thoi_gian_thuc_hien_hop_dong` không có trong API danh sách; cần API chi tiết (chưa xác minh ở Phase 0).",
-        "- `nguon_von` là proxy từ `planType` của KHLCNT, không phải field nguồn vốn gốc.",
+        "- `nguon_von` là proxy từ `planType` của KHLCNT, không phải field nguồn vốn gốc. Phạm vi giữ DTPT "
+        "(đầu tư công, kể cả vốn TPCP/ODA cân đối qua NSNN), TX, DTMS; loại KHAC.",
+        "- `dau_hieu_von_vay` chỉ là heuristic theo từ khoá (ODA, vốn vay, WB, ADB, JICA, trái phiếu...): "
+        "dùng cho phân tích độ nhạy, không dùng để lọc.",
         "- `tinh_thanh_63` để trống với gói đăng sau 01/07/2025 thuộc tỉnh đã sáp nhập (không truy ngược được).",
         "",
     ]

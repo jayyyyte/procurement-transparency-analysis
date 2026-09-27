@@ -5,8 +5,8 @@ import numpy as np
 import pandas as pd
 
 from src.clean.dedupe import dedupe_notices, dedupe_plans
-from src.clean.normalize import (HINH_THUC, LINH_VUC, PLAN_TYPE, ProvinceMapper, hinh_thuc_nhom,
-                                 parse_money, to_datetime)
+from src.clean.normalize import (HINH_THUC, LINH_VUC, PLAN_TYPE, ProvinceMapper, dau_hieu_von_vay,
+                                 hinh_thuc_nhom, parse_money, to_datetime)
 
 DATE_COLS = ["thoi_diem_dong_thau", "thoi_diem_mo_thau", "ngay_dang_tai", "ngay_dang_kqlcnt", "ngay_quyet_dinh"]
 
@@ -58,13 +58,17 @@ def integrate(interim: dict[str, pd.DataFrame], cfg, logger) -> tuple[pd.DataFra
     df["hinh_thuc_lua_chon_nha_thau"] = df["hinh_thuc_raw"].map(HINH_THUC).fillna(df["hinh_thuc_raw"])
     df["hinh_thuc_nhom"] = df["hinh_thuc_raw"].map(hinh_thuc_nhom)
     df["nguon_von"] = df["plan_type"].map(PLAN_TYPE).fillna(df["plan_type"])
+    df["dau_hieu_von_vay"] = [dau_hieu_von_vay(a, b) for a, b in zip(df["ten_du_an"], df["ten_goi_thau"])]
 
     # ---- state-budget filter (proxy on planType until a capital-source field is available) ----
+    # DTPT = đầu tư công (mọi nguồn cân đối qua NSNN, kể cả TPCP/ODA); TX, DTMS = chi thường xuyên NSNN.
+    # KHAC chủ yếu là vốn tự có của DNNN / nguồn xã hội hoá -> loại.
     keep_types = set(cfg["clean"]["nsnn_plan_types"])
     is_nsnn = df["plan_type"].isin(keep_types)
     stats["non_nsnn_removed"] = int((~is_nsnn).sum())
     stats["non_nsnn_by_type"] = df.loc[~is_nsnn, "plan_type"].fillna("NA").value_counts().to_dict()
     df = df[is_nsnn].copy()
+    stats["dau_hieu_von_vay"] = int(df["dau_hieu_von_vay"].sum())
 
     # ---- derived fields ----
     df["ty_le_trung_thau"] = df["gia_trung_thau"] / df["gia_goi_thau"].where(df["gia_goi_thau"] > 0)

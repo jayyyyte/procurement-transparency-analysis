@@ -51,9 +51,12 @@ crawl:
     kqlcnt: []
 
 clean:
-  # Danh sách API không có field "nguồn vốn". Proxy tạm thời: planType của KHLCNT
+  # API danh sách không có field "nguồn vốn" -> dùng planType của KHLCNT làm proxy
   # (DTPT = đầu tư phát triển, TX = chi thường xuyên, DTMS = dự toán mua sắm, KHAC = khác).
-  # Mặc định coi 3 loại đầu là chi từ ngân sách nhà nước, loại KHAC — CẦN CHỦ DỰ ÁN XÁC NHẬN tại gate Phase 0.
+  # Nhóm đã chốt (D3): giữ cả 3 loại chi NSNN. DTPT là đầu tư công (gồm mọi nguồn cân đối qua NSNN:
+  # NS trung ương, địa phương, trái phiếu Chính phủ, vốn vay ODA); TX/DTMS là chi thường xuyên — giữ để
+  # dữ liệu nhiều hơn, plan_type là feature của model. Loại KHAC (chủ yếu vốn tự có DNNN, nguồn xã hội hoá).
+  # Chỉ lấy đầu tư công nghĩa hẹp: đổi thành [DTPT].
   nsnn_plan_types: [DTPT, TX, DTMS]
   # ratio = gia_trung_thau / gia_goi_thau; ngoài khoảng này bị gắn cờ outlier
   ratio_outlier_low: 0.3
