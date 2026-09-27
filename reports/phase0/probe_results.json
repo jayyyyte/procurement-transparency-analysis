@@ -1,0 +1,698 @@
+{
+  "run_at": "2026-09-25T14:23:46",
+  "base_url": "https://muasamcong.mpi.gov.vn",
+  "robots": {
+    "status": 200,
+    "text": "User-Agent: *\nDisallow:",
+    "search_allowed": true
+  },
+  "pages": {
+    "home": {
+      "status": 200,
+      "latency_s": 2.47,
+      "bytes": 583701,
+      "loads_recaptcha": false,
+      "grecaptcha_execute_calls": 0,
+      "token_query_usages": [],
+      "services": [
+        "/o/egp-portal-home/services/adv-content/info-client-v2",
+        "/o/egp-portal-home/services/advertisement-info/get-list",
+        "/o/egp-portal-home/services/authorize-url",
+        "/o/egp-portal-home/services/bid-notify-contractor-p/top-5",
+        "/o/egp-portal-home/services/change-type-bmt",
+        "/o/egp-portal-home/services/check-confirm-agency",
+        "/o/egp-portal-home/services/check-view-popup",
+        "/o/egp-portal-home/services/common-noti/add-view-count",
+        "/o/egp-portal-home/services/common-noti/get-datetime-for-home-page-v2",
+        "/o/egp-portal-home/services/common-noti/get-for-home-page-v2",
+        "/o/egp-portal-home/services/common-video/get-list-for-guideline",
+        "/o/egp-portal-home/services/emphasis-content/get-list",
+        "/o/egp-portal-home/services/get-access-token",
+        "/o/egp-portal-home/services/get-data-file",
+        "/o/egp-portal-home/services/get-userinfo",
+        "/o/egp-portal-home/services/hs-gui/get-file-search-fast",
+        "/o/egp-portal-home/services/linked-bank/get-list",
+        "/o/egp-portal-home/services/news/get-list",
+        "/o/egp-portal-home/services/news/get-list-for-homepage-v2",
+        "/o/egp-portal-home/services/popular-keyword/get-list",
+        "/o/egp-portal-home/services/public/file/get-url",
+        "/o/egp-portal-home/services/smart/search",
+        "/o/egp-portal-home/services/statistic/bid-monitoring/aggregations",
+        "/o/egp-portal-home/services/typical-contractor/get-list",
+        "/o/egp-portal-home/services/update-view-popup"
+      ],
+      "es_types": [
+        "es--range",
+        "es-bido-notify-invest-ppp-p",
+        "es-bido-notify-invest-sdd-p",
+        "es-bido-notify-out-law-p",
+        "es-bido-notify-social-p",
+        "es-bidp-bidding-law-p",
+        "es-bidp-notify-invest-interest-p",
+        "es-bidp-notify-invest-interest-social",
+        "es-bidp-plan-project-invest-sdd-p",
+        "es-bidp-plan-project-out-law-p",
+        "es-bidp-plan-project-social-p",
+        "es-bidp-project-invest-ppp-p",
+        "es-bidp-project-invest-sdd-p",
+        "es-by-code-lst",
+        "es-export-import",
+        "es-extender",
+        "es-nldt",
+        "es-notify-contractor",
+        "es-plan-project-p",
+        "es-ppp",
+        "es-project-social-p",
+        "es-sdd",
+        "es-selector",
+        "es-web",
+        "es-xhh",
+        "es-xhh-old"
+      ],
+      "step_codes": [],
+      "portlet_unavailable": false
+    },
+    "contractor_selection": {
+      "status": 200,
+      "latency_s": 2.28,
+      "bytes": 609995,
+      "loads_recaptcha": true,
+      "grecaptcha_execute_calls": 1,
+      "token_query_usages": [
+        "this.elasticSearch+\"?token=\"+token,this.formatPayloadSearchWidthNotify(payload)"
+      ],
+      "services": [
+        "/o/egp-portal-contractor-selection-v2/services/add-to-viewed-list",
+        "/o/egp-portal-contractor-selection-v2/services/get-request-quote",
+        "/o/egp-portal-contractor-selection-v2/services/get-viewed-list",
+        "/o/egp-portal-contractor-selection-v2/services/get/area",
+        "/o/egp-portal-contractor-selection-v2/services/get/area-api",
+        "/o/egp-portal-contractor-selection-v2/services/get/category",
+        "/o/egp-portal-contractor-selection-v2/services/popular-keyword/get-list",
+        "/o/egp-portal-contractor-selection-v2/services/smart/search",
+        "/o/egp-portal-contractor-selection-v2/services/submission-online-reoffer/detail-dtos",
+        "/o/egp-portal-contractor-selection-v2/services/um/um-filter-info/get-um-filter-info-by-org-code",
+        "/o/egp-portal-home/services/authorize-url"
+      ],
+      "es_types": [
+        "es-bide-contractor-input-result-other",
+        "es-bido-interest-notify",
+        "es-bido-notify-invest-ppp-p",
+        "es-bido-notify-invest-sdd-p",
+        "es-bido-notify-out-law-p",
+        "es-bido-notify-social-p",
+        "es-bidp-bidding-law-p",
+        "es-bidp-notify-invest-interest-p",
+        "es-bidp-notify-invest-interest-social",
+        "es-bidp-plan-project-invest-sdd-p",
+        "es-bidp-plan-project-out-law-p",
+        "es-bidp-project-invest-ppp-p",
+        "es-bidp-project-invest-sdd-p",
+        "es-bidp-project-p",
+        "es-by-code-lst",
+        "es-ct-contract",
+        "es-ct-publish-frame",
+        "es-export-import",
+        "es-extender",
+        "es-khlcnt-tt",
+        "es-kqlcnt-old",
+        "es-nldt",
+        "es-notify-contractor",
+        "es-plan-project-p",
+        "es-ppp",
+        "es-pre-notify-contractor",
+        "es-project-social-p",
+        "es-re-offer-price",
+        "es-sdd",
+        "es-selector",
+        "es-shopping-result",
+        "es-web",
+        "es-xhh",
+        "es-ycbg"
+      ],
+      "step_codes": [
+        "notify-contractor-step-2-kqmt",
+        "notify-contractor-step-3-dsntdkt",
+        "notify-contractor-step-4-kqlcnt",
+        "pre-notify-contractor-step-2-kqmst",
+        "pre-notify-contractor-step-3-kqst"
+      ],
+      "portlet_unavailable": false
+    }
+  },
+  "advanced_search_without_token": {
+    "status": 400,
+    "latency_s": 1.77,
+    "content_type": null,
+    "body_head": "",
+    "returned_records": false
+  },
+  "samples": {
+    "tbmt": {
+      "n": 100,
+      "page_meta": {
+        "totalPages": 1000,
+        "pageSize": 10,
+        "currentPage": 9,
+        "totalElements": 10000,
+        "sort": null,
+        "first": false,
+        "last": false,
+        "empty": false
+      },
+      "key_fill_rate": {
+        "bidCloseDate": 1.0,
+        "bidField": 0.12,
+        "bidForm": 1.0,
+        "bidId": 1.0,
+        "bidMode": 1.0,
+        "bidName": 1.0,
+        "bidNo": 0.12,
+        "bidOpenDate": 1.0,
+        "bidPrice": 1.0,
+        "createdBy": 1.0,
+        "id": 1.0,
+        "investField": 1.0,
+        "investorCode": 1.0,
+        "investorName": 1.0,
+        "isDomestic": 1.0,
+        "isInternet": 1.0,
+        "isMedicine": 0.29,
+        "isMultiLot": 0.12,
+        "locations": 1.0,
+        "medicines": 0.01,
+        "notifyId": 1.0,
+        "notifyNo": 1.0,
+        "notifyNoStand": 1.0,
+        "notifyVersion": 1.0,
+        "numBidderJoin": 0.01,
+        "numBidderTech": 0.88,
+        "numClarifyReq": 0.88,
+        "numPetition": 0.88,
+        "numPetitionHsmt": 0.88,
+        "numPetitionKqlcnt": 0.88,
+        "numPetitionLcnt": 0.88,
+        "originalPublicDate": 1.0,
+        "planNo": 1.0,
+        "planType": 1.0,
+        "pname": 0.11,
+        "priceInit": 0.11,
+        "priceStep": 0.09,
+        "processApply": 1.0,
+        "procuringEntityCode": 0.11,
+        "procuringEntityName": 0.11,
+        "publicDate": 1.0,
+        "score": 0.0,
+        "status": 1.0,
+        "statusForNotify": 0.01,
+        "stepCode": 1.0,
+        "type": 1.0,
+        "workType": 0.3
+      }
+    },
+    "kqlcnt": {
+      "n": 50,
+      "page_meta": {
+        "totalPages": 1000,
+        "pageSize": 10,
+        "currentPage": 4,
+        "totalElements": 10000,
+        "sort": null,
+        "first": false,
+        "last": false,
+        "empty": false
+      },
+      "key_fill_rate": {
+        "bidCloseDate": 1.0,
+        "bidField": 1.0,
+        "bidForm": 1.0,
+        "bidId": 1.0,
+        "bidMode": 1.0,
+        "bidName": 1.0,
+        "bidPrice": 1.0,
+        "bidWinningPrice": 1.0,
+        "caseKHKQ": 1.0,
+        "contractorName": 1.0,
+        "decisionDate": 0.98,
+        "id": 1.0,
+        "inputResultId": 1.0,
+        "investField": 1.0,
+        "investorCode": 1.0,
+        "investorName": 1.0,
+        "isInternet": 1.0,
+        "isMedicine": 0.18,
+        "isPass": 1.0,
+        "notifyId": 1.0,
+        "notifyNo": 1.0,
+        "notifyNoStand": 1.0,
+        "notifyVersion": 1.0,
+        "numBidderJoin": 1.0,
+        "numBidderTech": 1.0,
+        "numClarifyReq": 1.0,
+        "numPetition": 1.0,
+        "numPetitionHsmt": 1.0,
+        "numPetitionKqlcnt": 1.0,
+        "numPetitionLcnt": 1.0,
+        "planNo": 1.0,
+        "planType": 1.0,
+        "planVersion": 1.0,
+        "processApply": 1.0,
+        "publicDate": 1.0,
+        "publicDateKqlcnt": 1.0,
+        "score": 0.0,
+        "status": 1.0,
+        "statusForNotify": 1.0,
+        "stepCode": 1.0,
+        "type": 1.0,
+        "winningCode": 1.0,
+        "winningContractorName": 0.0
+      }
+    },
+    "khlcnt": {
+      "n": 50,
+      "page_meta": {
+        "totalPages": 1000,
+        "pageSize": 10,
+        "currentPage": 4,
+        "totalElements": 10000,
+        "sort": null,
+        "first": false,
+        "last": false,
+        "empty": false
+      },
+      "key_fill_rate": {
+        "approvalStatus": 1.0,
+        "bidCloseDate": 1.0,
+        "bidName": 1.0,
+        "bidNamePlanNew": 1.0,
+        "bidPrice": 1.0,
+        "createdBy": 1.0,
+        "decisionDate": 1.0,
+        "haveBidNotNotify": 1.0,
+        "id": 1.0,
+        "investField": 1.0,
+        "investTotal": 0.88,
+        "investorCode": 1.0,
+        "investorName": 1.0,
+        "locations": 1.0,
+        "name": 1.0,
+        "planNo": 1.0,
+        "planNoStand": 1.0,
+        "planType": 1.0,
+        "planVersion": 1.0,
+        "pname": 0.86,
+        "procuringEntityCode": 0.56,
+        "procuringEntityName": 0.56,
+        "publicDate": 1.0,
+        "score": 0.0,
+        "stepCode": 1.0,
+        "type": 1.0
+      }
+    }
+  },
+  "latencies_s": [
+    2.44,
+    2.45,
+    2.33,
+    2.42,
+    2.32,
+    2.44,
+    2.47,
+    2.17,
+    2.19,
+    2.1,
+    2.14,
+    2.08,
+    2.4,
+    2.33,
+    2.37,
+    2.08,
+    2.19,
+    2.29,
+    2.17,
+    2.34
+  ],
+  "home_search_page_size_20": {
+    "status": 400,
+    "body_head": "PageSize unsatisfactory!!!"
+  },
+  "daily_volume": {
+    "tbmt": {
+      "2026-08-26": 594,
+      "2025-08-21": 418,
+      "2023-12-30": 751
+    },
+    "kqlcnt": {
+      "2026-08-26": 3281,
+      "2025-08-21": 1323,
+      "2023-12-30": 1155
+    },
+    "khlcnt": {
+      "2026-08-26": 2150,
+      "2025-08-21": 1127,
+      "2023-12-30": 560
+    }
+  },
+  "aggregations": {
+    "totalBidPlan": 304751,
+    "totalValueBidPlan": 9406669327291573,
+    "totalBid": 636460,
+    "totalValueBid": 1740286554269004,
+    "totalInvestor": 85380,
+    "totalUser": 336391,
+    "totalSystemUser": 104109,
+    "totalViolateContractor": 317,
+    "totalUnreliableContractor": 127,
+    "totalPetitionAnswered": 4568,
+    "totalPetitionUnanswered": 1158,
+    "totalOnScheduleBid": 389587,
+    "totalOffScheduleBid": 246873
+  },
+  "detail_page": {
+    "url": "/web/guest/contractor-selection?render=detail&type=es-notify-contractor&stepCode=notify-contractor-step-1-tbmt&id=f6803ab2-0fce-43e5-8e50-a818debfb3ab&notifyId=f6803ab2-0fce-43e5-8e50-a818debfb3ab&notifyNo=IB2600554925&planNo=PL2600284358",
+    "status": 200,
+    "bytes": 253614,
+    "loads_recaptcha": false,
+    "grecaptcha_execute_calls": 0,
+    "token_query_usages": [],
+    "services": [
+      "/o/egp-portal-home/services/authorize-url"
+    ],
+    "es_types": [
+      "es-bido-notify-invest-ppp-p",
+      "es-bido-notify-invest-sdd-p",
+      "es-bido-notify-out-law-p",
+      "es-bido-notify-social-p",
+      "es-bidp-bidding-law-p",
+      "es-bidp-notify-invest-interest-p",
+      "es-bidp-notify-invest-interest-social",
+      "es-bidp-plan-project-invest-sdd-p",
+      "es-bidp-plan-project-out-law-p",
+      "es-bidp-project-invest-ppp-p",
+      "es-bidp-project-invest-sdd-p",
+      "es-by-code-lst",
+      "es-export-import",
+      "es-extender",
+      "es-nldt",
+      "es-notify-contractor",
+      "es-ppp",
+      "es-project-social-p",
+      "es-sdd",
+      "es-selector",
+      "es-web",
+      "es-xhh"
+    ],
+    "step_codes": [
+      "dnotify-contractor-step-1-tbmt",
+      "notify-contractor-step-1-tbmt"
+    ],
+    "portlet_unavailable": true
+  },
+  "field_coverage": {
+    "ma_goi_thau": {
+      "fill_rate": 1.0,
+      "source": "tbmt",
+      "key": "notifyNo"
+    },
+    "ten_goi_thau": {
+      "fill_rate": 1.0,
+      "source": "tbmt",
+      "key": "bidName"
+    },
+    "ten_du_an": {
+      "fill_rate": 1.0,
+      "source": "khlcnt",
+      "key": "name"
+    },
+    "chu_dau_tu": {
+      "fill_rate": 1.0,
+      "source": "khlcnt",
+      "key": "investorName"
+    },
+    "ben_moi_thau": {
+      "fill_rate": 1.0,
+      "source": "tbmt",
+      "key": "investorName"
+    },
+    "tinh_thanh": {
+      "fill_rate": 1.0,
+      "source": "tbmt",
+      "key": "locations"
+    },
+    "linh_vuc": {
+      "fill_rate": 1.0,
+      "source": "tbmt",
+      "key": "investField"
+    },
+    "nguon_von": {
+      "fill_rate": 1.0,
+      "source": "tbmt",
+      "key": "planType"
+    },
+    "hinh_thuc_lua_chon_nha_thau": {
+      "fill_rate": 1.0,
+      "source": "tbmt",
+      "key": "bidForm"
+    },
+    "gia_goi_thau": {
+      "fill_rate": 1.0,
+      "source": "tbmt",
+      "key": "bidPrice"
+    },
+    "gia_trung_thau": {
+      "fill_rate": 1.0,
+      "source": "kqlcnt",
+      "key": "bidWinningPrice"
+    },
+    "nha_thau_trung_thau": {
+      "fill_rate": 1.0,
+      "source": "kqlcnt",
+      "key": "contractorName"
+    },
+    "so_nha_thau_tham_du": {
+      "fill_rate": 1.0,
+      "source": "kqlcnt",
+      "key": "numBidderJoin"
+    },
+    "thoi_diem_dong_mo_thau": {
+      "fill_rate": 1.0,
+      "source": "tbmt",
+      "key": "bidCloseDate"
+    },
+    "thoi_gian_thuc_hien_hop_dong": {
+      "fill_rate": 0.0,
+      "source": null,
+      "key": null
+    },
+    "ngay_dang_tai": {
+      "fill_rate": 1.0,
+      "source": "tbmt",
+      "key": "publicDate"
+    }
+  },
+  "fields_available_ge_50pct": 15,
+  "fields_total": 16,
+  "client_stats": {
+    "started_at": "2026-09-25T14:23:46",
+    "requests": 36,
+    "ok": 34,
+    "errors": 0,
+    "retries": 0,
+    "bytes": 1752513,
+    "records": 0,
+    "elapsed_s": 81.5,
+    "status_counts": {
+      "200": 34,
+      "400": 2
+    }
+  },
+  "volume": {
+    "days": [
+      "2026-09-24",
+      "2026-06-19",
+      "2026-03-13",
+      "2025-12-06",
+      "2025-08-30",
+      "2025-05-25",
+      "2025-02-17",
+      "2024-11-11",
+      "2024-08-06",
+      "2024-04-30",
+      "2024-01-24",
+      "2023-10-19",
+      "2023-07-13",
+      "2023-04-07",
+      "2022-12-30",
+      "2022-09-24"
+    ],
+    "totals": {
+      "tbmt": {
+        "2026-09-24": 395,
+        "2026-06-19": 619,
+        "2026-03-13": 398,
+        "2025-12-06": 256,
+        "2025-08-30": 98,
+        "2025-05-25": 62,
+        "2025-02-17": 454,
+        "2024-11-11": 1083,
+        "2024-08-06": 744,
+        "2024-04-30": 15,
+        "2024-01-24": 308,
+        "2023-10-19": 726,
+        "2023-07-13": 510,
+        "2023-04-07": 594,
+        "2022-12-30": 754,
+        "2022-09-24": 57
+      },
+      "kqlcnt": {
+        "2026-09-24": 3480,
+        "2026-06-19": 3081,
+        "2026-03-13": 2176,
+        "2025-12-06": 895,
+        "2025-08-30": 621,
+        "2025-05-25": 283,
+        "2025-02-17": 1358,
+        "2024-11-11": 2595,
+        "2024-08-06": 2042,
+        "2024-04-30": 88,
+        "2024-01-24": 1293,
+        "2023-10-19": 1577,
+        "2023-07-13": 1285,
+        "2023-04-07": 1017,
+        "2022-12-30": 2294,
+        "2022-09-24": 67
+      },
+      "khlcnt": {
+        "2026-09-24": 2033,
+        "2026-06-19": 1753,
+        "2026-03-13": 1519,
+        "2025-12-06": 652,
+        "2025-08-30": 503,
+        "2025-05-25": 97,
+        "2025-02-17": 884,
+        "2024-11-11": 1713,
+        "2024-08-06": 1343,
+        "2024-04-30": 45,
+        "2024-01-24": 685,
+        "2023-10-19": 1132,
+        "2023-07-13": 863,
+        "2023-04-07": 873,
+        "2022-12-30": 917,
+        "2022-09-24": 122
+      }
+    },
+    "kqlcnt_competitive": {
+      "2026-09-24": 692,
+      "2026-06-19": 504,
+      "2026-03-13": 344,
+      "2025-12-06": 146,
+      "2025-08-30": 70,
+      "2025-05-25": 48,
+      "2025-02-17": 446,
+      "2024-11-11": 927,
+      "2024-08-06": 686,
+      "2024-04-30": 40,
+      "2024-01-24": 484,
+      "2023-10-19": 632,
+      "2023-07-13": 579,
+      "2023-04-07": 429,
+      "2022-12-30": 1273,
+      "2022-09-24": 0
+    },
+    "tbmt_step_mix": {
+      "2026-09-24": {
+        "notify-contractor-step-1-tbmt": 9,
+        "reoffer-price-step-1": 1
+      },
+      "2026-06-19": {
+        "notify-contractor-step-4-kqlcnt": 10
+      },
+      "2026-03-13": {
+        "notify-contractor-step-4-kqlcnt": 10
+      },
+      "2025-12-06": {
+        "notify-contractor-step-4-kqlcnt": 7,
+        "notify-contractor-step-2-kqmt": 3
+      },
+      "2025-08-30": {
+        "notify-contractor-step-4-kqlcnt": 8,
+        "notify-contractor-step-2-kqmt": 2
+      },
+      "2025-05-25": {
+        "notify-contractor-step-4-kqlcnt": 8,
+        "notify-contractor-step-1-tbmt": 1,
+        "notify-contractor-step-2-kqmt": 1
+      },
+      "2025-02-17": {
+        "notify-contractor-step-4-kqlcnt": 10
+      },
+      "2024-11-11": {
+        "notify-contractor-step-4-kqlcnt": 10
+      },
+      "2024-08-06": {
+        "notify-contractor-step-4-kqlcnt": 9,
+        "notify-contractor-step-2-kqmt": 1
+      },
+      "2024-04-30": {
+        "notify-contractor-step-4-kqlcnt": 9,
+        "notify-contractor-step-2-kqmt": 1
+      },
+      "2024-01-24": {
+        "notify-contractor-step-4-kqlcnt": 9,
+        "notify-contractor-step-1-tbmt": 1
+      },
+      "2023-10-19": {
+        "notify-contractor-step-4-kqlcnt": 10
+      },
+      "2023-07-13": {
+        "notify-contractor-step-4-kqlcnt": 9,
+        "notify-contractor-step-2-kqmt": 1
+      },
+      "2023-04-07": {
+        "notify-contractor-step-4-kqlcnt": 10
+      },
+      "2022-12-30": {
+        "notify-contractor-step-4-kqlcnt": 7,
+        "notify-contractor-step-2-kqmt": 2,
+        "notify-contractor-step-1-tbmt": 1
+      },
+      "2022-09-24": {
+        "notify-contractor-step-4-kqlcnt": 9,
+        "notify-contractor-step-1-tbmt": 1
+      }
+    },
+    "tbmt_has_winning_price": {
+      "2026-09-24": 0,
+      "2026-06-19": 10,
+      "2026-03-13": 9,
+      "2025-12-06": 7,
+      "2025-08-30": 8,
+      "2025-05-25": 8,
+      "2025-02-17": 10,
+      "2024-11-11": 10,
+      "2024-08-06": 9,
+      "2024-04-30": 9,
+      "2024-01-24": 9,
+      "2023-10-19": 10,
+      "2023-07-13": 9,
+      "2023-04-07": 10,
+      "2022-12-30": 5,
+      "2022-09-24": 9
+    },
+    "mean_per_day": {
+      "tbmt": 442.1,
+      "kqlcnt": 1509.5,
+      "khlcnt": 945.9,
+      "kqlcnt_competitive": 456.2
+    }
+  },
+  "volume_run_at": "2026-09-25T14:28:44",
+  "tbmt_old_step4_check": {
+    "day": "2025-03-12",
+    "n": 10,
+    "bidWinningPrice": 10,
+    "contractorName": 10,
+    "numBidderJoin": 10,
+    "locations": 10
+  }
+}
