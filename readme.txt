@@ -32,7 +32,9 @@ Kiem tra:  python -m pytest          (19 test, khong can Internet)
         -> reports/phase0_feasibility.md, reports/phase0/probe_results.json
   B1. Crawl:  python run_pipeline.py crawl [--sources tbmt,kqlcnt,khlcnt] [--start YYYY-MM-DD --end YYYY-MM-DD]
         * Gate Phase 0 da chot (crawl.approved_option: "A", xem phase0_feasibility.md muc 6).
-          Neu approved_option = null hoac user_agent chua co email lien he thi lenh crawl tu dung.
+        * Truoc khi crawl: dat email lien he (mail truong) vao bien moi truong, vd PowerShell:
+              $env:PTVN_CONTACT_EMAIL="ten@sis.hust.edu.vn"
+          Neu approved_option = null hoac chua dat bien nay thi lenh crawl tu dung.
         * Dot 1: 24 thang tinh tu ngay chay (crawl.months_back: 24), 1 request / 1.5-2s.
           Dot 2: doi months_back thanh 48 roi chay lai lenh cu -> chi crawl them phan cu hon.
         * Truoc khi chot dataset final: crawl lai ~3 thang cuoi de lay ket qua cua cac goi

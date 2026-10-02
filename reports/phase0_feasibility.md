@@ -101,7 +101,7 @@ Tất cả quyết định đã chốt trong nhóm, 02/10/2026 (riêng D3 chốt
   - Field chỉ có ở trang chi tiết. API chi tiết chưa xác định được, và lấy thì mỗi gói thêm 1 request (khoảng 2–3 triệu request, **gấp ~6 lần** thời gian crawl), không còn khả năng đạt 48 tháng.
   - Ảnh hưởng: model regression mất 1 feature (§7.1); `features.py` tự loại cột trống. Độ phức tạp của gói vẫn phần lớn được phản ánh qua `log_gia_goi`, `linh_vuc`, `hinh_thuc`. Ghi là hạn chế trong report.
   - Tuỳ chọn nếu còn thời gian: recon API chi tiết, lấy cho mẫu ~3–5 nghìn gói để phân tích độ nhạy (model có/không có feature này).
-- **D5 — Email liên hệ:** ✅ Không có email nhóm; dùng mail trường của Data Lead (`linh.ct235963@sis.hust.edu.vn`) trong `crawl.user_agent`. `run_pipeline.py crawl` tự dừng nếu User-Agent còn placeholder.
+- **D5 — Email liên hệ:** ✅ Không có email nhóm; dùng mail trường (`@sis.hust.edu.vn`) của người chạy crawl, đặt qua biến môi trường `PTVN_CONTACT_EMAIL` để không ghi email cá nhân vào repo. `run_pipeline.py crawl` tự dừng nếu biến này chưa được đặt.
 
 ## 7. Khó khăn & hướng giải quyết (dùng cho written report)
 

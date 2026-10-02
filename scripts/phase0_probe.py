@@ -136,7 +136,7 @@ def main() -> None:
     SAMPLE.mkdir(parents=True, exist_ok=True)
     OUT.mkdir(parents=True, exist_ok=True)
 
-    client = PoliteClient(crawl["base_url"], crawl["user_agent"].replace("<team-email>", "phase0-probe"),
+    client = PoliteClient(crawl["base_url"], crawl["user_agent"].format(contact="phase0-probe"),
                           min_delay_s=args.delay, jitter_s=0.5, max_retries=2)
     res: dict = {"run_at": datetime.now().isoformat(timespec="seconds"), "base_url": crawl["base_url"]}
     if args.sections == "volume":
