@@ -16,10 +16,14 @@ paths:
 
 crawl:
   base_url: https://muasamcong.mpi.gov.vn
-  # Điền email liên hệ của team trước khi crawl thật
-  user_agent: "ptvn-capstone/0.1 (HUST IT4142E student project; contact: <team-email>)"
-  # Cửa sổ thời gian: mặc định 48 tháng tính ngược từ ngày chạy; start_date/end_date (YYYY-MM-DD) override nếu khác null
-  months_back: 48
+  # D5: email liên hệ để đơn vị vận hành site báo nếu crawler gây vấn đề (mail trường của Data Lead)
+  user_agent: "ptvn-capstone/0.1 (HUST IT4142E student project; contact: linh.ct235963@sis.hust.edu.vn)"
+  # Cửa sổ thời gian: tính ngược từ ngày chạy; start_date/end_date (YYYY-MM-DD) override nếu khác null
+  # D2 (nhóm chốt 02/10/2026): đợt 1 = 24 tháng; sau đó đổi thành 48 và chạy lại `crawl` —
+  # checkpoint theo (nguồn, ngày) nên 24 tháng đã xong được bỏ qua, chỉ crawl thêm phần cũ hơn.
+  # ⚠️ Trước khi chốt dataset final: crawl lại ~3 tháng cuối (xem phase0_feasibility.md §6 D2) —
+  # với S2, gói TBMT crawl lúc chưa có KQ sẽ thiếu giá trúng/nhà thầu nếu không crawl lại.
+  months_back: 24
   start_date: null
   end_date: null
   sources: [tbmt, khlcnt, kqlcnt]
@@ -34,9 +38,9 @@ crawl:
   raw_batch_size: 500       # số bản ghi raw mỗi file .jsonl.gz
 
   # ---- GATE PHASE 0 ----
-  # Full crawl bị khoá cho tới khi chủ dự án/giảng viên chọn phương án trong reports/phase0_feasibility.md.
   # Giá trị hợp lệ: null (khoá) | "A" (HTTP, endpoint không gắn reCAPTCHA) | "B" (trình duyệt thật, chưa implement)
-  approved_option: null
+  # D1 (nhóm chốt 02/10/2026): phương án A — endpoint trang chủ, giữ tải thấp (xem reports/phase0_feasibility.md §6).
+  approved_option: "A"
 
   endpoints:
     # Endpoint trang chủ dùng (không gắn reCAPTCHA; pageSize tối đa 10) — chỉ crawl quy mô lớn khi approved_option = "A"
@@ -44,11 +48,11 @@ crawl:
     # Endpoint trang tìm kiếm nâng cao — GẮN reCAPTCHA v3 (?token=...): chỉ được probe 1 lần ở Phase 0, không crawl
     advanced_search: /o/egp-portal-contractor-selection-v2/services/smart/search
   # Filter theo nguồn (type/stepCode/date field) nằm trong src/crawler/es_query.py
-  # Chiến lược (reports/phase0_feasibility.md §4): mặc định S1 = 3 nguồn độc lập.
-  # S2: KQLCNT chỉ lấy caseKHKQ=1, vì KQ của gói có TBMT đã nằm sẵn trong bản ghi TBMT (bước 4) -> ~15% ít request:
-  #   kqlcnt: [{fieldName: caseKHKQ, searchType: in, fieldValues: ["1"]}]
+  # Chiến lược (reports/phase0_feasibility.md §4): S1 = 3 nguồn độc lập.
+  # S2 (đang dùng, D2): KQLCNT chỉ lấy caseKHKQ=1, vì KQ của gói có TBMT đã nằm sẵn trong bản ghi TBMT (bước 4)
+  # -> ~15% ít request. Về S1: đặt kqlcnt: []
   extra_filters:
-    kqlcnt: []
+    kqlcnt: [{fieldName: caseKHKQ, searchType: in, fieldValues: ["1"]}]
 
 clean:
   # API danh sách không có field "nguồn vốn" -> dùng planType của KHLCNT làm proxy

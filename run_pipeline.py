@@ -22,7 +22,7 @@ from src.logs import setup_logging
 STEPS = ["crawl", "parse", "clean", "eda", "model", "report"]
 
 GATE_MSG = """Full crawl đang bị KHOÁ bởi gate Phase 0 (crawl.approved_option = null trong config/config.yaml).
-Đọc reports/phase0_feasibility.md, để chủ dự án/giảng viên chọn phương án, rồi đặt approved_option: "A".
+Đọc reports/phase0_feasibility.md §6 (nhóm đã chốt D1 = phương án A), rồi đặt approved_option: "A".
 (Dùng --data fixture để chạy các bước sau trên dữ liệu tổng hợp trong lúc chờ.)"""
 
 
@@ -53,6 +53,8 @@ def step_crawl(cfg, args, log) -> None:
         sys.exit("Phương án B (trình duyệt thật) chưa được implement — cần thiết kế riêng sau khi được duyệt.")
     if c["approved_option"] != "A":
         sys.exit(f"approved_option không hợp lệ: {c['approved_option']!r}")
+    if "<" in c["user_agent"]:
+        sys.exit("crawl.user_agent còn placeholder — điền email liên hệ (D5) trước khi crawl thật.")
     if args.start:
         c["start_date"] = args.start
     if args.end:
