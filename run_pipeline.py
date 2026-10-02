@@ -11,6 +11,7 @@ never mix with results from real crawled data.
 from __future__ import annotations
 
 import argparse
+import os
 import sys
 from datetime import date, datetime
 
@@ -53,8 +54,11 @@ def step_crawl(cfg, args, log) -> None:
         sys.exit("Phương án B (trình duyệt thật) chưa được implement — cần thiết kế riêng sau khi được duyệt.")
     if c["approved_option"] != "A":
         sys.exit(f"approved_option không hợp lệ: {c['approved_option']!r}")
-    if "<" in c["user_agent"]:
-        sys.exit("crawl.user_agent còn placeholder — điền email liên hệ (D5) trước khi crawl thật.")
+    contact = os.environ.get(c["contact_env"], "").strip()
+    if "@" not in contact:
+        sys.exit(f"Chưa có email liên hệ (D5): đặt biến môi trường {c['contact_env']} trước khi crawl thật, "
+                 f"vd PowerShell: $env:{c['contact_env']}=\"ten@sis.hust.edu.vn\"")
+    c["user_agent"] = c["user_agent"].format(contact=contact)
     if args.start:
         c["start_date"] = args.start
     if args.end:

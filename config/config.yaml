@@ -16,8 +16,10 @@ paths:
 
 crawl:
   base_url: https://muasamcong.mpi.gov.vn
-  # D5: email liên hệ để đơn vị vận hành site báo nếu crawler gây vấn đề (mail trường của Data Lead)
-  user_agent: "ptvn-capstone/0.1 (HUST IT4142E student project; contact: linh.ct235963@sis.hust.edu.vn)"
+  # D5: email liên hệ để đơn vị vận hành site báo nếu crawler gây vấn đề. Không ghi vào repo:
+  # {contact} được thay bằng biến môi trường `contact_env` (email của người chạy crawl, ưu tiên mail trường).
+  user_agent: "ptvn-capstone/0.1 (HUST IT4142E student project; contact: {contact})"
+  contact_env: PTVN_CONTACT_EMAIL
   # Cửa sổ thời gian: tính ngược từ ngày chạy; start_date/end_date (YYYY-MM-DD) override nếu khác null
   # D2 (nhóm chốt 02/10/2026): đợt 1 = 24 tháng; sau đó đổi thành 48 và chạy lại `crawl` —
   # checkpoint theo (nguồn, ngày) nên 24 tháng đã xong được bỏ qua, chỉ crawl thêm phần cũ hơn.

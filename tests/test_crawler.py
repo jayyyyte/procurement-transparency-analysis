@@ -4,6 +4,7 @@ from datetime import date
 import pytest
 
 import run_pipeline
+from src.config import load_config
 from src.crawler.checkpoint import Checkpoint
 from src.crawler.raw_store import RawStore, iter_raw
 from src.crawler.sources import SearchSource
@@ -67,3 +68,17 @@ def test_crawl_is_locked_until_gate_approved(monkeypatch):
     with pytest.raises(SystemExit) as e:
         run_pipeline.main(["crawl"])
     assert "gate Phase 0" in str(e.value)
+
+
+def test_crawl_requires_contact_email(monkeypatch):
+    # Gate open but no contact email -> must exit before any request is sent.
+    def approved(path=None):
+        cfg = load_config(path)
+        cfg["crawl"]["approved_option"] = "A"
+        return cfg
+
+    monkeypatch.setattr(run_pipeline, "load_config", approved)
+    monkeypatch.delenv("PTVN_CONTACT_EMAIL", raising=False)
+    with pytest.raises(SystemExit) as e:
+        run_pipeline.main(["crawl"])
+    assert "PTVN_CONTACT_EMAIL" in str(e.value)
