@@ -41,6 +41,7 @@ Các task dưới đây gắn deadline theo 2 mốc này (và theo tuần tươn
 | Go/no-go decision dựa trên kết quả Phase 0 | Ngay sau khi Data Engineer báo kết quả POC (~cuối tuần 1) | Quyết định scope chính thức |
 | Cleaning pipeline khung, chạy thử trên data POC | Tuần 1-2 | Pipeline script nháp |
 | Clean + join dataset bản draft (đủ để demo tiến độ) | **Trước Progress Report** | Dataset draft + data quality report sơ bộ |
+| ⚠️ Yêu cầu Data Engineer crawl lại ~3 tháng cuối (lấy KQ của gói TBMT lúc crawl chưa có KQ, xem `phase0_feasibility.md` §6 D2), kiểm tra % gói có KQ theo tháng không tụt ở cuối | Ngay trước khi chốt dataset final | Dataset không lệch ở các tháng gần đây |
 | Hoàn thiện dataset final (full scope), bàn giao AI team | Trước khi AI team bước vào train chính thức (giữa giai đoạn sau Progress Report) | Dataset final |
 | Tổng hợp & rà soát written report + slide cuối | Trước Final Report ít nhất vài ngày (buffer) | Report/slide hoàn chỉnh |
 

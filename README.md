@@ -3,7 +3,7 @@
 Capstone IT4142E (SOICT – HUST): crawl dữ liệu đấu thầu công khai từ `muasamcong.mpi.gov.vn` → làm sạch & tích hợp → EDA → dự đoán % tiết kiệm (Linear Regression / Random Forest / LightGBM) và điểm bất thường thống kê (Rule-based / Isolation Forest / LOF).
 
 - **Hướng dẫn cài đặt & chạy:** [`readme.txt`](readme.txt)
-- **Trạng thái hiện tại — gate Phase 0:** [`reports/phase0_feasibility.md`](reports/phase0_feasibility.md) (full crawl đang chờ chủ dự án duyệt)
+- **Trạng thái hiện tại — gate Phase 0:** [`reports/phase0_feasibility.md`](reports/phase0_feasibility.md) (gate đã chốt 02/10/2026 — full crawl đợt 1: 24 tháng, sau đó mở rộng lên 48 tháng)
 - **Đặc tả & phân vai:** [`docs/requirements.md`](docs/requirements.md), [`docs/team-plan.md`](docs/team-plan.md)
 
 ```bash

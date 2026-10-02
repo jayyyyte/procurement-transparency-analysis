@@ -11,7 +11,7 @@
 | Crawl được bằng HTTP thuần (không cần JS render/login) | ✅ Qua API JSON, **nhưng** có vấn đề reCAPTCHA (xem §3, câu 2) |
 | Tốc độ đủ cho full scope trong timeline | ⚠️ 48 tháng × 3 nguồn ≈ **4,2 triệu bản ghi ≈ 10 ngày crawl liên tục** ở mức 1 request/2s. Timeline chỉ dành 1 tuần (tuần 2) |
 
-**Đề xuất:** kỹ thuật đã khả thi, nhưng **full crawl vẫn bị khoá** (`crawl.approved_option: null`). Chủ dự án/giảng viên cần chốt các quyết định ở §5, đặc biệt là D1 (dùng endpoint không gắn reCAPTCHA) và D2 (phạm vi/thời gian).
+**Kết luận gate (02/10/2026):** kỹ thuật khả thi; nhóm đã chốt D1–D5 (§6) và **mở full crawl**: phương án A, chiến lược S2, đợt 1 là 24 tháng rồi mở rộng lên 48 tháng, crawl lại ~3 tháng cuối trước khi chốt dataset final.
 
 ## 2. Cách khảo sát
 
@@ -82,24 +82,26 @@ Thời gian ước tính ở 1 request/2s, 10 bản ghi/request, 1 tiến trình
 - Chạy 2 tiến trình song song (R1: TBMT+KHLCNT, R2: KQLCNT) giảm một nửa thời gian thực, nhưng tổng tải lên site thành 1 request/s. Mức này vẫn trong khoảng "1 request/1–2s" của FR-1, nhưng cần được đồng ý (D2).
 - Dung lượng: raw gzip khoảng 0,5–1 GB cho 48 tháng. `packages.parquet` vài trăm MB, pandas xử lý được; PySpark là tuỳ chọn.
 
-## 6. Quyết định cần chủ dự án / giảng viên chốt
+## 6. Quyết định tại gate (nhóm chốt)
 
-- **D1 — Dùng endpoint trang chủ (không reCAPTCHA) ở quy mô lớn?**
-  - Lý do ủng hộ: endpoint công khai, chính trang chủ gọi không cần CAPTCHA, `robots.txt` cho phép, và tải được giữ thấp.
-  - Lý do cần cân nhắc: cùng dữ liệu đó ở trang tìm kiếm nâng cao được bảo vệ bằng reCAPTCHA. Crawl hàng triệu bản ghi qua cửa ngõ khác có thể bị coi là **đi vòng qua ý định bảo vệ** của site (§2.2).
-  - Nếu **đồng ý**, đặt `approved_option: "A"`. Nếu **không**, cần phương án khác: xin dữ liệu mở từ đơn vị vận hành, hoặc thu hẹp mạnh (phương án C).
-- **D2 — Phạm vi thời gian & tốc độ:** chọn một trong
-  - (a) 48 tháng với S2 và 2 tiến trình, khoảng 4,2 ngày, 1 request/s tổng;
-  - (b) 24 tháng với S2 và 1 tiến trình, khoảng 4,2 ngày;
-  - (c) 36 tháng với S3, khoảng 3,9 ngày.
+Tất cả quyết định đã chốt trong nhóm, 02/10/2026 (riêng D3 chốt 27/09/2026).
 
-  Requirements không cho Claude Code tự cắt scope.
+- **D1 — Dùng endpoint trang chủ (không reCAPTCHA) ở quy mô lớn:** ✅ **Đồng ý (phương án A)**, `approved_option: "A"`.
+  - Lý do: endpoint công khai, chính trang chủ gọi không cần CAPTCHA, `robots.txt` cho phép, và tải được giữ thấp.
+  - Điều đã cân nhắc: cùng dữ liệu đó ở trang tìm kiếm nâng cao được bảo vệ bằng reCAPTCHA, nên crawl hàng triệu bản ghi qua cửa ngõ khác có thể bị coi là **đi vòng qua ý định bảo vệ** của site (§2.2). Nhóm giảm rủi ro bằng cách giữ tốc độ ~1 request/2s, ghi email liên hệ trong User-Agent (D5), và để circuit breaker dừng hẳn khi gặp 403/challenge thay vì tìm cách vượt.
+- **D2 — Phạm vi thời gian & tốc độ:** ✅ **Crawl theo 2 đợt, mục tiêu 48 tháng**, chiến lược S2, 1 tiến trình.
+  - Đợt 1: 24 tháng gần nhất (`months_back: 24`), khoảng 4,2 ngày.
+  - Đợt 2: đổi `months_back: 48` và chạy lại `crawl`. Checkpoint theo (nguồn, ngày) nên phần đã có được bỏ qua, chỉ crawl thêm 24 tháng cũ hơn (khoảng 4,2 ngày nữa; có thể tách 2 tiến trình theo `--sources` nếu cần nhanh).
+  - ⚠️ **Phải crawl lại ~3 tháng cuối trước khi chốt dataset final.** Với S2, kết quả (giá trúng, nhà thầu, số nhà thầu) của gói có TBMT chỉ nằm trong bản ghi TBMT khi gói đã sang bước 4. Gói đăng gần ngày crawl chưa có kết quả, và sẽ thiếu kết quả vĩnh viễn nếu không crawl lại, làm lệch dữ liệu: gói gần đây trông như "chưa có KQ" nhiều bất thường. Cách làm: xoá checkpoint của các ngày đó trong `data/checkpoint.sqlite` rồi crawl lại với `--start/--end`. Bản cũ và bản mới cùng nằm trong raw; `dedupe_notices` giữ bản ở bước xa nhất (đã có KQ), nên bản crawl lại tự thay bản cũ.
 - **D3 — Định nghĩa "vốn ngân sách nhà nước":** ✅ **Nhóm đã chốt (27/09/2026):** dùng proxy `planType ∈ {DTPT, TX, DTMS}`, loại `KHAC` (~18% mẫu), không recon API chi tiết.
   - DTPT là đầu tư công, đã gồm mọi nguồn cân đối qua NSNN (NS trung ương, địa phương, trái phiếu Chính phủ, vốn vay ODA). TX/DTMS là chi thường xuyên NSNN, giữ lại để dataset lớn hơn; `plan_type` là feature của model.
   - `KHAC` trong mẫu chủ yếu là vốn tự có của DNNN (điện lực, BIDV, cảng, PV Gas) và nguồn xã hội hoá ở trường học, nên loại.
   - Giới hạn: không tách được gói ODA/TPCP khỏi DTPT. Cột heuristic `dau_hieu_von_vay` (theo từ khoá tên) dùng cho phân tích độ nhạy.
-- **D4 — `thoi_gian_thuc_hien_hop_dong`:** bỏ field này (§7.1 liệt kê nó là feature), hay R1/R2 recon API chi tiết bằng DevTools? Nếu recon, mỗi gói thêm 1 request, tức khoảng 2–3 triệu request, **gấp ~6 lần** thời gian crawl. Đề xuất: bỏ, hoặc chỉ lấy cho một mẫu nhỏ.
-- **D5:** điền email liên hệ của team vào `crawl.user_agent` trước khi chạy.
+- **D4 — `thoi_gian_thuc_hien_hop_dong`:** ✅ **Bỏ** khỏi crawl chính.
+  - Field chỉ có ở trang chi tiết. API chi tiết chưa xác định được, và lấy thì mỗi gói thêm 1 request (khoảng 2–3 triệu request, **gấp ~6 lần** thời gian crawl), không còn khả năng đạt 48 tháng.
+  - Ảnh hưởng: model regression mất 1 feature (§7.1); `features.py` tự loại cột trống. Độ phức tạp của gói vẫn phần lớn được phản ánh qua `log_gia_goi`, `linh_vuc`, `hinh_thuc`. Ghi là hạn chế trong report.
+  - Tuỳ chọn nếu còn thời gian: recon API chi tiết, lấy cho mẫu ~3–5 nghìn gói để phân tích độ nhạy (model có/không có feature này).
+- **D5 — Email liên hệ:** ✅ Không có email nhóm; dùng mail trường của Data Lead (`linh.ct235963@sis.hust.edu.vn`) trong `crawl.user_agent`. `run_pipeline.py crawl` tự dừng nếu User-Agent còn placeholder.
 
 ## 7. Khó khăn & hướng giải quyết (dùng cho written report)
 
@@ -116,6 +118,7 @@ Thời gian ước tính ở 1 request/2s, 10 bản ghi/request, 1 tiến trình
 
 ## 8. Trạng thái code tại thời điểm gate
 
-- **Crawler** (`src/crawler/`): rate limit + jitter, retry/backoff, circuit breaker (dừng khi gặp 403/challenge), checkpoint SQLite, raw gzip JSONL. Có test resumability bằng client giả. `run_pipeline.py crawl` bị khoá tới khi `approved_option` được đặt.
+- **Crawler** (`src/crawler/`): rate limit + jitter, retry/backoff, circuit breaker (dừng khi gặp 403/challenge), checkpoint SQLite, raw gzip JSONL. Có test resumability bằng client giả. `run_pipeline.py crawl` bị khoá khi `approved_option` là null hoặc User-Agent chưa có email liên hệ.
 - **Phase 2–5** chạy end-to-end trên dữ liệu tổng hợp: `python run_pipeline.py all --data fixture`, khoảng 30s, ra 12 hình và các bảng so sánh model. Dữ liệu này không bao giờ dùng cho kết quả.
-- Sau khi gate duyệt: đặt `approved_option: "A"`, cấu hình `start_date`/`extra_filters` theo D2, chạy `python run_pipeline.py crawl` rồi `python run_pipeline.py all`.
+- Gate đã mở (02/10/2026): config đã đặt `approved_option: "A"`, `months_back: 24`, `extra_filters` theo S2. Chạy `python run_pipeline.py crawl` rồi `python run_pipeline.py all`.
+- Ghi nhận 02/10/2026: ngay sau khi mở gate, một unit test (kiểm tra gate) đã vô tình chạy crawl thật khoảng 2 phút (~80 request, đúng rate limit, TBMT ngày 30/09–02/10) với User-Agent còn placeholder. Đã dừng và sửa test để luôn ép gate đóng; dữ liệu thu được hợp lệ và được giữ lại trong checkpoint.

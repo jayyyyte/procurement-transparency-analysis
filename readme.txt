@@ -31,9 +31,12 @@ Kiem tra:  python -m pytest          (19 test, khong can Internet)
   B0. Phase 0 (da lam, tai lap duoc):  python scripts/phase0_probe.py
         -> reports/phase0_feasibility.md, reports/phase0/probe_results.json
   B1. Crawl:  python run_pipeline.py crawl [--sources tbmt,kqlcnt,khlcnt] [--start YYYY-MM-DD --end YYYY-MM-DD]
-        * BI KHOA cho toi khi chu du an duyet gate Phase 0: dat crawl.approved_option: "A"
-          trong config/config.yaml (xem phase0_feasibility.md muc 6).
-        * Mac dinh 48 thang tinh tu ngay chay (crawl.months_back), 1 request / 1.5-2s.
+        * Gate Phase 0 da chot (crawl.approved_option: "A", xem phase0_feasibility.md muc 6).
+          Neu approved_option = null hoac user_agent chua co email lien he thi lenh crawl tu dung.
+        * Dot 1: 24 thang tinh tu ngay chay (crawl.months_back: 24), 1 request / 1.5-2s.
+          Dot 2: doi months_back thanh 48 roi chay lai lenh cu -> chi crawl them phan cu hon.
+        * Truoc khi chot dataset final: crawl lai ~3 thang cuoi de lay ket qua cua cac goi
+          TBMT luc crawl chua co KQ (phase0_feasibility.md muc 6, D2).
         * Dung giua chung (Ctrl+C) roi chay lai lenh cu -> tiep tuc tu checkpoint
           (data/checkpoint.sqlite), khong crawl trung.
         * Thoi gian uoc tinh: 2-10 ngay tuy pham vi (phase0_feasibility.md muc 5).
