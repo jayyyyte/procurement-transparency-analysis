@@ -54,7 +54,16 @@ def test_crawl_is_resumable(tmp_path):
     assert len(lines) == 6 and lines[0]["kind"] == "list"
 
 
-def test_crawl_is_locked_until_gate_approved():
+def test_crawl_is_locked_until_gate_approved(monkeypatch):
+    # Force the gate closed: with the real config already approved, this would start a live crawl.
+    real_load = run_pipeline.load_config
+
+    def locked(path=None):
+        cfg = real_load(path)
+        cfg["crawl"]["approved_option"] = None
+        return cfg
+
+    monkeypatch.setattr(run_pipeline, "load_config", locked)
     with pytest.raises(SystemExit) as e:
         run_pipeline.main(["crawl"])
     assert "gate Phase 0" in str(e.value)

@@ -83,7 +83,8 @@ def write_report(df: pd.DataFrame, stats: dict, cfg, mode: str) -> str:
         "",
         "## Ghi chú",
         "",
-        "- `thoi_gian_thuc_hien_hop_dong` không có trong API danh sách; cần API chi tiết (chưa xác minh ở Phase 0).",
+        "- `thoi_gian_thuc_hien_hop_dong` không có trong API danh sách, chỉ có ở trang chi tiết; nhóm quyết định "
+        "bỏ (D4) vì lấy sẽ tăng thời gian crawl ~6 lần.",
         "- `nguon_von` là proxy từ `planType` của KHLCNT, không phải field nguồn vốn gốc. Phạm vi giữ DTPT "
         "(đầu tư công, kể cả vốn TPCP/ODA cân đối qua NSNN), TX, DTMS; loại KHAC.",
         "- `dau_hieu_von_vay` chỉ là heuristic theo từ khoá (ODA, vốn vay, WB, ADB, JICA, trái phiếu...): "
