@@ -91,7 +91,7 @@ Ket qua:
 ---------------------------------------------------------------------------
 7. LUU Y DAO DUC / PHAP LY
 ---------------------------------------------------------------------------
-  * Chi dung du lieu cong khai, khong dang nhap, khong vuot CAPTCHA; crawler dung han khi gap
+li  * Chi dung du lieu cong khai, khong dang nhap, khong vuot CAPTCHA; crawler dung han khi gap
     403/challenge. User-Agent ghi ro muc dich hoc thuat.
   * Diem anomaly la "diem bat thuong thong ke", KHONG phai ket luan vi pham hay gian lan.
 
