@@ -76,7 +76,7 @@ def build(cfg, mode: str, results: dict, logger) -> Path:
               f"Số gói theo số thuật toán đồng thuận: {s['consensus_counts']}.", "",
               md_table(pd.read_csv(tables / "anomaly_agreement.csv")), "",
               "Top gói thầu (ưu tiên số thuật toán đồng thuận, rồi percentile trung bình):", "",
-              md_table(top[["ma_tbmt", "ben_moi_thau", "nha_thau_trung_thau", "ty_le_trung_thau", "so_nha_thau_tham_du",
+              md_table(top[["ma_tbmt", "ben_moi_thau", "nha_thau_chuan", "ty_le_trung_thau", "so_nha_thau_tham_du",
                             "n_methods_flagged", "giai_thich_tin_hieu"]].head(10), "{:.3f}"), "",
               "Đầy đủ: `tables/anomaly_top.csv`. Đối chiếu định tính với tin thanh tra/kiểm toán công khai: _R5 bổ sung_.", ""]
         L += [f"![{f.stem}]({rel(f)})" for f in sorted(figs.glob("fig12_*.png"))] + [""]
