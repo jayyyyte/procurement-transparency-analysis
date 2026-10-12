@@ -7,6 +7,7 @@ Phân tích minh bạch đấu thầu đầu tư công Việt Nam: crawl dữ li
 
 - [`requirements.md`](./requirements.md) — đặc tả kỹ thuật đầy đủ
 - [`team-plan.md`](./team-plan.md) — phân vai & timeline cho team 5 người
+- [`work-log.md`](./work-log.md) — nhật ký làm việc: đầu việc, quá trình, kết quả, vấn đề còn mở
 
 ## Thứ tự đọc gợi ý
 
