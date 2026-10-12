@@ -8,6 +8,8 @@ import matplotlib.pyplot as plt  # noqa: E402
 import numpy as np  # noqa: E402
 import pandas as pd  # noqa: E402
 
+from src.clean.contractors import contractor_names, explode_winners  # noqa: E402
+
 # Reference palette (dataviz skill, light mode); first 3 categorical slots validated all-pairs.
 SURFACE = "#fcfcfb"
 TEXT = "#0b0b0b"
@@ -133,13 +135,20 @@ def fig_savings(df, cfg, note):
 
 
 def fig_contractors(df, cfg, note):
-    d = df.dropna(subset=["nha_thau_trung_thau"])
+    names = contractor_names(df)
     fig, axes = plt.subplots(1, 2, figsize=(13, 5.5))
-    short = lambda s: s if len(s) <= 42 else s[:40] + "…"  # noqa: E731
-    wins = d["nha_thau_trung_thau"].value_counts().head(12)
-    _hbar(axes[0], wins.rename(index=short), "Top nhà thầu theo số gói trúng", lambda v: f"{v:,.0f}")
-    val = d.groupby("nha_thau_trung_thau")["gia_trung_thau"].sum().sort_values(ascending=False).head(12) / 1e9
-    _hbar(axes[1], val.rename(index=short), "Top nhà thầu theo tổng giá trúng", ty, "tỷ đồng")
+
+    def short(key):
+        s = str(names.get(key, key))
+        return s if len(s) <= 42 else s[:40] + "…"
+
+    wins = explode_winners(df)["nha_thau_key"].value_counts().head(12)
+    _hbar(axes[0], wins.rename(index=short), "Top nhà thầu theo số gói trúng (kể cả liên danh / trúng một phần)",
+          lambda v: f"{v:,.0f}")
+    # giá trúng của gói nhiều nhà thầu (liên danh, nhiều phần) không tách được cho từng nhà thầu
+    d = df[df["so_nha_thau_trung"] == 1]
+    val = d.groupby("nha_thau_key")["gia_trung_thau"].sum().sort_values(ascending=False).head(12) / 1e9
+    _hbar(axes[1], val.rename(index=short), "Top nhà thầu theo tổng giá trúng (gói 1 nhà thầu)", ty, "tỷ đồng")
     fig.tight_layout()
     return _save(fig, cfg, "fig06_top_nha_thau", note)
 
@@ -166,8 +175,7 @@ def fig_bidders(df, cfg, note):
 
 def hhi_by_solicitor(df: pd.DataFrame, min_packages: int = 5) -> pd.Series:
     """Herfindahl index of winners' share (by count) for each bid solicitor with >= min_packages results."""
-    d = df.dropna(subset=["nha_thau_trung_thau"])
-    counts = d.groupby(["ma_ben_moi_thau", "nha_thau_trung_thau"]).size()
+    counts = explode_winners(df).groupby(["ma_ben_moi_thau", "nha_thau_key"]).size()
     totals = counts.groupby(level=0).sum()
     shares = counts / totals.reindex(counts.index.get_level_values(0)).values
     hhi = (shares ** 2).groupby(level=0).sum()

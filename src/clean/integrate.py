@@ -4,6 +4,7 @@ from __future__ import annotations
 import numpy as np
 import pandas as pd
 
+from src.clean.contractors import resolve_winners
 from src.clean.dedupe import dedupe_notices, dedupe_plans
 from src.clean.normalize import (HINH_THUC, LINH_VUC, PLAN_TYPE, ProvinceMapper, dau_hieu_von_vay,
                                  hinh_thuc_nhom, parse_money, to_datetime)
@@ -77,6 +78,7 @@ def integrate(interim: dict[str, pd.DataFrame], cfg, logger) -> tuple[pd.DataFra
     t = df["ngay_dang_tai"]
     df["nam"], df["quy"], df["thang"] = t.dt.year, t.dt.quarter, t.dt.to_period("M").astype(str)
     df = df.rename(columns={"thoi_diem_dong_thau": "thoi_diem_dong_mo_thau"})
+    df, stats["winners"] = resolve_winners(df)
 
     stats["packages"] = len(df)
     out = cfg.path("processed_dir")

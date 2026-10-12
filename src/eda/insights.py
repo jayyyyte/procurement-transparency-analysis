@@ -3,6 +3,7 @@ from __future__ import annotations
 
 import pandas as pd
 
+from src.clean.contractors import contractor_names, explode_winners
 from src.clean.normalize import now_str
 from src.eda.plots import hhi_by_solicitor
 
@@ -16,7 +17,8 @@ def compute(df: pd.DataFrame) -> dict:
     single = comp[comp["so_nha_thau_tham_du"] == 1]
     multi = comp[comp["so_nha_thau_tham_du"] >= 2]
     hhi = hhi_by_solicitor(df)
-    wins = df["nha_thau_trung_thau"].value_counts()
+    wins = explode_winners(df)["nha_thau_key"].value_counts()
+    names = contractor_names(df)
     return {
         "n_packages": len(df),
         "n_with_result": len(res),
@@ -37,7 +39,7 @@ def compute(df: pd.DataFrame) -> dict:
         "share_near_zero_saving": float((res["tiet_kiem_pct"] < 0.01).mean()) if len(res) else None,
         "n_solicitors_hhi": len(hhi),
         "share_solicitors_hhi_gt_025": float((hhi > 0.25).mean()) if len(hhi) else None,
-        "top_contractor": wins.index[0] if len(wins) else None,
+        "top_contractor": names.get(wins.index[0], wins.index[0]) if len(wins) else None,
         "top_contractor_wins": int(wins.iloc[0]) if len(wins) else None,
     }
 

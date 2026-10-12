@@ -45,6 +45,28 @@ def dau_hieu_von_vay(*texts: object) -> bool:
     return any(_VON_VAY.search(norm_key(t)) for t in texts if t is not None)
 
 
+# winningCode là mã định danh trên hệ thống (vn<MST>, vnz…, vnp…, cnz…) và ổn định theo nhà thầu. Nhà thầu chưa
+# đăng ký (cửa hàng, hộ kinh doanh, đơn vị nội bộ) nhận một UUID / chuỗi hex sinh mới cho từng kết quả.
+MA_DINH_DANH = r"[a-z]{2,3}\d{9,10}"
+# Chú thích loại hình trong ngoặc: "(LOẠI HÌNH DOANH NGHIỆP: CÔNG TY TNHH)", "(Loại hình: Công ty TNHH)", "(TNHH 1TV)"
+_LOAI_HINH = re.compile(r"(loai hinh( doanh nghiep)? )?(cong ty |cty )?(tnhh|trach nhiem huu han|co phan|cp)"
+                        r"( (1|2|mot|hai) ?(tv|thanh vien)( tro len)?)?")
+_NGOAC = re.compile(r"\s*\(([^()]*)\)")
+
+
+def is_ma_dinh_danh(code) -> bool:
+    return isinstance(code, str) and re.fullmatch(MA_DINH_DANH, code) is not None
+
+
+def ten_nha_thau_chuan(name) -> str | None:
+    """Display name: whitespace collapsed, bracketed legal-form annotations dropped. Other brackets
+    (trade names, former names) are part of the name and stay."""
+    if name is None or (isinstance(name, float) and np.isnan(name)):
+        return None
+    s = _NGOAC.sub(lambda m: "" if _LOAI_HINH.fullmatch(norm_key(m.group(1))) else m.group(0), str(name))
+    return " ".join(s.split()) or None
+
+
 def to_datetime(s: pd.Series) -> pd.Series:
     """API timestamps are local Vietnam time (UTC+7) without offset; kept naive."""
     return pd.to_datetime(s, errors="coerce", format="mixed")

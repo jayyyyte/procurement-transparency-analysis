@@ -68,6 +68,17 @@ def write_report(df: pd.DataFrame, stats: dict, cfg, mode: str) -> str:
         f"| **Gói thầu cuối cùng** | **{stats['packages']:,}** |",
         f"| Trong đó có dấu hiệu vốn vay (ODA/TPCP, theo từ khoá tên) | {stats.get('dau_hieu_von_vay', 0):,} |",
         f"| Trong đó đã có kết quả (giá trúng) | {int(df['co_ket_qua'].sum()):,} |",
+    ]
+    w = stats.get("winners")
+    if w:
+        lines += [
+            f"| Gói có nhà thầu trúng | {w['packages_with_winner']:,} ({w['contractors']:,} nhà thầu phân biệt) |",
+            f"| — 1 nhà thầu, định danh theo mã hệ thống | {w['by_system_code']:,} |",
+            f"| — nhà thầu chưa đăng ký, định danh theo tên trong phạm vi bên mời thầu | {w['by_name_unregistered']:,} |",
+            f"| — nhiều nhà thầu (liên danh / gói nhiều phần) | {w['multi_winner']:,} |",
+            f"| Mã nhà thầu được ghi dưới nhiều tên khác nhau | {w['codes_with_name_variants']:,} |",
+        ]
+    lines += [
         "",
         "## % thiếu theo field (schema §3.4)",
         "",
@@ -90,6 +101,10 @@ def write_report(df: pd.DataFrame, stats: dict, cfg, mode: str) -> str:
         "- `dau_hieu_von_vay` chỉ là heuristic theo từ khoá (ODA, vốn vay, WB, ADB, JICA, trái phiếu...): "
         "dùng cho phân tích độ nhạy, không dùng để lọc.",
         "- `tinh_thanh_63` để trống với gói đăng sau 01/07/2025 thuộc tỉnh đã sáp nhập (không truy ngược được).",
+        "- `nha_thau_key` định danh nhà thầu theo mã trên hệ thống (`ma_nha_thau_trung_thau`), không theo tên: cùng một "
+        "mã có thể được ghi dưới nhiều tên, và nhiều đơn vị khác nhau trùng tên. Nhà thầu chưa đăng ký nhận mã ngẫu "
+        "nhiên cho từng kết quả nên được định danh theo tên, chỉ trong phạm vi một bên mời thầu. "
+        "`nha_thau_chuan` là tên hiển thị đã bỏ chú thích loại hình, vd \"(LOẠI HÌNH DOANH NGHIỆP: CÔNG TY TNHH)\".",
         "",
     ]
     text = "\n".join(lines)
