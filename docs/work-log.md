@@ -144,7 +144,7 @@ Tổng cộng ~13 phút trên máy cá nhân, không cần PySpark. Ra 12 hình 
 
 **Việc 15. Cập nhật tài liệu** (`6798c5b`, 11:51)
 - Thêm `docs/requirements_specification.docx` (777 KB).
-- Sửa mục 7 (đạo đức / pháp lý) của `readme.txt` — *xem §4, lỗi gõ `li` còn sót ở dòng này*.
+- Sửa mục 7 (đạo đức / pháp lý) của `readme.txt` — commit này để sót chữ `li` thừa ở đầu dòng 94, đã gỡ ở bước sau (xem §4 #8).
 
 **Việc 16. Kiểm tra lại test** (12/10)
 - `python -m pytest`: **27 passed** trong 23 s, không cần Internet.
@@ -248,7 +248,7 @@ Tỉ lệ gói có kết quả theo tháng đăng TBMT (tính từ `packages.par
 | 5 | Outlier giá chưa quyết định xử lý (2.450 gói giá trúng > giá gói; 106 gói giá ≤ 0) | Thấp–TB | Xác định đây là lỗi nhập liệu hay có thật; ghi quyết định vào `config.yaml` (`ratio_outlier_*`) |
 | 6 | Regression R² thấp (0,153), baseline trung vị thắng về MAE | Thấp | Thử `target: log_gia_trung`; thử phân loại "có tiết kiệm / không"; ghi rõ hạn chế (thiếu `thoi_gian_thuc_hien`, D4) |
 | 7 | Anomaly: 3 phương pháp ít đồng thuận; chưa có đối chiếu định tính | Thấp | R5 tìm vài vụ có tin thanh tra/kiểm toán công khai để đối chiếu; trình bày theo "tín hiệu" chứ không "vi phạm" |
-| 8 | `readme.txt` dòng 94 có `li` thừa (commit `6798c5b`) và ghi "19 test" trong khi thực tế **27 test** | Thấp | Sửa 2 chỗ này |
+| 8 | ~~`readme.txt` dòng 94 có `li` thừa (commit `6798c5b`) và ghi "19 test" trong khi thực tế 27 test~~ | — | ✅ Đã sửa 12/10/2026 (chưa commit) |
 | 9 | Written report chưa viết | — | Dùng `reports/report_assets.md` + §3 nhật ký này làm nguyên liệu |
 
 ---

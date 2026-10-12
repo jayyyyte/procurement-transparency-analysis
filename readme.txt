@@ -13,7 +13,7 @@ Pipeline: crawl du lieu dau thau cong khai (muasamcong.mpi.gov.vn) -> lam sach &
   macOS/Linux:  source .venv/bin/activate
   pip install -r requirements.txt
 
-Kiem tra:  python -m pytest          (19 test, khong can Internet)
+Kiem tra:  python -m pytest          (27 test, khong can Internet)
 
 ---------------------------------------------------------------------------
 2. CHAY NHANH (khong can crawl) - du lieu tong hop de kiem thu pipeline
@@ -91,7 +91,7 @@ Ket qua:
 ---------------------------------------------------------------------------
 7. LUU Y DAO DUC / PHAP LY
 ---------------------------------------------------------------------------
-li  * Chi dung du lieu cong khai, khong dang nhap, khong vuot CAPTCHA; crawler dung han khi gap
+  * Chi dung du lieu cong khai, khong dang nhap, khong vuot CAPTCHA; crawler dung han khi gap
     403/challenge. User-Agent ghi ro muc dich hoc thuat.
   * Diem anomaly la "diem bat thuong thong ke", KHONG phai ket luan vi pham hay gian lan.
 
