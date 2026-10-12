@@ -4,14 +4,18 @@ from __future__ import annotations
 import networkx as nx
 import pandas as pd
 
+from src.clean.contractors import contractor_names, explode_winners
+
 
 def run(df: pd.DataFrame, cfg, logger) -> dict:
     seed = cfg["model"]["random_state"]
-    d = df.dropna(subset=["nha_thau_trung_thau", "ma_ben_moi_thau"])
+    d = df.dropna(subset=["nha_thau_key", "ma_ben_moi_thau"])
     if len(d) < cfg["model"]["min_rows"]:
         logger.warning("network skipped: only %d packages with a winner", len(d))
         return {"skipped": True}
-    d = d.assign(winner=d["ma_nha_thau_trung_thau"].fillna(d["nha_thau_trung_thau"]))
+    # one edge per (solicitor, winner); a multi-winner package's price is split evenly so totals are conserved
+    d = explode_winners(d.assign(gia_trung_thau=d["gia_trung_thau"] / d["so_nha_thau_trung"]))
+    d = d.rename(columns={"nha_thau_key": "winner"})
     edges = d.groupby(["ma_ben_moi_thau", "winner"]).agg(w=("ma_tbmt", "size"), value=("gia_trung_thau", "sum"))
     if edges.empty:
         return {"skipped": True}
@@ -19,7 +23,7 @@ def run(df: pd.DataFrame, cfg, logger) -> dict:
     for (bmt, nt), r in edges.iterrows():
         G.add_edge(f"B:{bmt}", f"N:{nt}", weight=int(r["w"]), value=float(r["value"]))
     comms = nx.community.louvain_communities(G, weight="weight", seed=seed)
-    names = d.drop_duplicates("winner").set_index("winner")["nha_thau_trung_thau"]
+    names = contractor_names(df)
     bmt_names = d.drop_duplicates("ma_ben_moi_thau").set_index("ma_ben_moi_thau")["ben_moi_thau"]
     rows = []
     for i, c in enumerate(comms):
@@ -34,7 +38,7 @@ def run(df: pd.DataFrame, cfg, logger) -> dict:
                      "tong_gia_trung_ty": sum(dd["value"] for _, _, dd in sub.edges(data=True)) / 1e9,
                      # share of the community's contractors' wins that happen inside the community
                      "ty_le_khep_kin": inside / total if total else 0.0,
-                     "nha_thau_tieu_bieu": ", ".join(names.get(x, x) for x in n[:3]),
+                     "nha_thau_tieu_bieu": ", ".join(str(names.get(x, x)) for x in n[:3]),
                      "ben_moi_thau_tieu_bieu": ", ".join(str(bmt_names.get(x, x)) for x in b[:3])})
     if not rows:
         logger.warning("network: no community with >= 2 bid solicitors")

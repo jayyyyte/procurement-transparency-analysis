@@ -101,7 +101,7 @@ def run(df: pd.DataFrame, cfg, logger) -> dict:
 
     top = d.sort_values(["n_methods_flagged", "mean_percentile"], ascending=False).head(a["top_k"]).copy()
     top["giai_thich_tin_hieu"] = top.apply(explain, axis=1, cfg=cfg)
-    cols = ["ma_tbmt", "ten_goi_thau", "ben_moi_thau", "nha_thau_trung_thau", "tinh_thanh", "hinh_thuc_lua_chon_nha_thau",
+    cols = ["ma_tbmt", "ten_goi_thau", "ben_moi_thau", "nha_thau_chuan", "tinh_thanh", "hinh_thuc_lua_chon_nha_thau",
             "gia_goi_thau", "gia_trung_thau", "ty_le_trung_thau", "so_nha_thau_tham_du", "wins_in_window",
             "score_rule", "score_iforest", "score_lof", "n_methods_flagged", "giai_thich_tin_hieu"]
 
