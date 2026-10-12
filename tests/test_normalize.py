@@ -2,7 +2,8 @@ import numpy as np
 import pandas as pd
 import pytest
 
-from src.clean.normalize import ProvinceMapper, dau_hieu_von_vay, hinh_thuc_nhom, parse_money
+from src.clean.normalize import (ProvinceMapper, dau_hieu_von_vay, hinh_thuc_nhom, is_ma_dinh_danh, parse_money,
+                                 ten_nha_thau_chuan)
 from src.config import PROJECT_ROOT
 
 
@@ -67,3 +68,28 @@ def test_hinh_thuc_nhom():
 ])
 def test_dau_hieu_von_vay(texts, expected):
     assert dau_hieu_von_vay(*texts) is expected
+
+
+@pytest.mark.parametrize("raw,expected", [
+    ("TẬP ĐOÀN BƯU CHÍNH VIỄN THÔNG VIỆT NAM (LOẠI HÌNH DOANH NGHIỆP: CÔNG TY TNHH)", "TẬP ĐOÀN BƯU CHÍNH VIỄN THÔNG VIỆT NAM"),
+    ("TỔNG CÔNG TY DỊCH VỤ VIỄN THÔNG\n                (Loại hình: Công ty TNHH)", "TỔNG CÔNG TY DỊCH VỤ VIỄN THÔNG"),
+    ("Chi nhánh VNPT (loại hình doanh nghiệp: Công ty TNHH) – Viễn thông TP.HCM", "Chi nhánh VNPT – Viễn thông TP.HCM"),
+    ("CÔNG TY ĐIỆN LỰC A (CÔNG TY TNHH 1TV) | Công ty  B (TNHH)", "CÔNG TY ĐIỆN LỰC A | Công ty B"),
+    ("CÔNG TY CỔ PHẦN DƯỢC - TRANG THIẾT BỊ Y TẾ BÌNH ĐỊNH (BIDIPHAR)", "CÔNG TY CỔ PHẦN DƯỢC - TRANG THIẾT BỊ Y TẾ BÌNH ĐỊNH (BIDIPHAR)"),
+    ("Công ty X (TÊN CŨ: CÔNG TY TNHH Y)", "Công ty X (TÊN CŨ: CÔNG TY TNHH Y)"),
+    ("   ", None),
+    (None, None),
+    (np.nan, None),
+])
+def test_ten_nha_thau_chuan(raw, expected):
+    assert ten_nha_thau_chuan(raw) == expected
+
+
+@pytest.mark.parametrize("code,expected", [
+    ("vn0100684378", True), ("vnz000045866", True), ("vnp000019476", True), ("cnz000000123", True),
+    ("f7a5063c-9654-43c6-8b0a-5bd8a41cf1b1", False),   # UUID: unregistered contractor, new for every result
+    ("4979ffb57145c80dc76cacd4bbec", False),
+    ("vn0100684378 | vn0109113989", False), (None, False), (np.nan, False),
+])
+def test_is_ma_dinh_danh(code, expected):
+    assert is_ma_dinh_danh(code) is expected
