@@ -13,7 +13,7 @@ Pipeline: crawl du lieu dau thau cong khai (muasamcong.mpi.gov.vn) -> lam sach &
   macOS/Linux:  source .venv/bin/activate
   pip install -r requirements.txt
 
-Kiem tra:  python -m pytest          (27 test, khong can Internet)
+Kiem tra:  python -m pytest          (50 test, khong can Internet)
 
 ---------------------------------------------------------------------------
 2. CHAY NHANH (khong can crawl) - du lieu tong hop de kiem thu pipeline

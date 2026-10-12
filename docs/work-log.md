@@ -16,7 +16,7 @@
 | Phase 0 — POC crawl & feasibility | 25/09 | ✅ Xong | 200 bản ghi mẫu thật, 15/16 field có dữ liệu |
 | Chốt gate D1–D5 | 27/09 (D3), 02/10 (còn lại) | ✅ Xong | Phương án A, chiến lược S2, đợt 1 = 24 tháng |
 | Full crawl đợt 1 (24 tháng) | 02–06/10 | ✅ Xong | 206.621 request, 2.056.114 bản ghi, **0 lỗi** |
-| Parse → clean → EDA → model → report trên dữ liệu thật | 12/10 | ✅ Chạy hết | 1.108.989 gói thầu; LightGBM R² test 0,153; 1.173 gói được cả 3 thuật toán gắn cờ |
+| Parse → clean → EDA → model → report trên dữ liệu thật | 12/10 | ✅ Chạy hết | 1.108.989 gói thầu; LightGBM R² test 0,153; 903 gói được cả 3 thuật toán gắn cờ (sau Việc 17) |
 | Crawl mở rộng 48 tháng | — | ⏳ Chưa làm | Chưa có log |
 | Crawl lại ~3 tháng cuối trước khi chốt dataset | — | ⏳ **Cần làm** | Tỉ lệ có KQ đã tụt còn 88,8% ở 09–10/2026 (§3.3) |
 
@@ -149,6 +149,21 @@ Tổng cộng ~13 phút trên máy cá nhân, không cần PySpark. Ra 12 hình 
 **Việc 16. Kiểm tra lại test** (12/10)
 - `python -m pytest`: **27 passed** trong 23 s, không cần Internet.
 
+**Việc 17. Định danh nhà thầu trúng + sửa lỗi `wins_in_window`** (12/10, chưa commit; xử lý vấn đề #4)
+
+Kiểm tra vấn đề #4 trên `packages.parquet` cho thấy hậu tố tên chỉ là phần nhỏ nhất; có 3 lỗi, xếp theo mức ảnh hưởng:
+
+| Lỗi | Quy mô | Cách sửa |
+|---|---|---|
+| `wins_in_window` gán lệch dòng: `anomaly_frame` gán kết quả `groupby().rolling()` theo vị trí, nhưng pandas 3.0.6 trả các nhóm theo thứ tự khác với frame | 534.383 gói (50,2%) sai số lần thắng; **269.848 gói (25,3%) sai cờ `repeat_winner`**, chỉ 48,2% số cờ đã xuất là đúng. Tổng số cờ không đổi (260.380) nên tỉ lệ 24,4% trông bình thường | `trailing_count()` trong `src/model/features.py`: đếm bằng `searchsorted` trên trục (nhóm, thời gian), không phụ thuộc thứ tự trả về |
+| Khoá nhà thầu không ổn định: (a) 54.624 gói có nhiều mã (liên danh / gói nhiều phần) bị coi chuỗi ghép `A \| B` là một nhà thầu; (b) 15.182 gói của nhà thầu chưa đăng ký mang UUID / chuỗi hex sinh mới cho từng kết quả nên không bao giờ lặp | `repeat_winner` bị đếm thiếu: 260.380 → 283.168 gói (24,4% → 26,6%) sau khi sửa | `src/clean/contractors.py`: cột `nha_thau_key`, `so_nha_thau_trung`. Tách từng mã; nhà thầu chưa đăng ký định danh theo tên trong phạm vi một bên mời thầu |
+| EDA nhóm theo tên thô: 4.417 mã được ghi dưới nhiều tên; ngược lại 1.146 tên dùng chung cho nhiều mã (vd 25 đơn vị cùng tên "Trung tâm Quan trắc tài nguyên và môi trường") | VNPT 3.340 → 3.351 gói khi gộp 12 cách viết; hậu tố `(LOẠI HÌNH DOANH NGHIỆP: …)` có ở 3.376 gói, gần như chỉ của VNPT (đó là tên đăng ký chính thức) | fig06, fig08, insight và network nhóm theo `nha_thau_key`; cột `nha_thau_chuan` là tên hiển thị đã gộp khoảng trắng và bỏ chú thích loại hình |
+
+- Tên và mã trong API **không cùng thứ tự** (chỉ 12,5% khớp cùng vị trí, 99,2% khớp ở một vị trí nào đó), nên định danh chỉ dựa vào mã, không ghép tên với mã theo vị trí.
+- Thay đổi cách đếm cần nêu trong report: thành viên liên danh / nhà thầu trúng một phần được tính một lần thắng; gói nhiều nhà thầu lấy tín hiệu của nhà thầu lặp lại nhiều nhất. Vì vậy top "số gói trúng" (fig06) có thêm các công ty dược. Top "tổng giá trúng" chỉ tính gói 1 nhà thầu vì giá của gói nhiều nhà thầu không tách được.
+- Hạn chế còn lại: 7.910 mã chỉ xuất hiện trong gói nhiều nhà thầu nên chưa có tên hiển thị (bảng network in mã); 1.402 gói của nhà thầu chưa đăng ký trùng tên với một nhà thầu có mã tại cùng bên mời thầu nhưng chưa được gộp.
+- Chạy lại `clean → eda → model → report` (~11 phút). Test: **50 passed** (thêm `tests/test_contractors.py`, test hồi quy cho lỗi lệch dòng). Số liệu §3.2, §3.5, §3.6 bên dưới đã cập nhật.
+
 ---
 
 ## 3. Kết quả
@@ -163,7 +178,7 @@ Tổng cộng ~13 phút trên máy cá nhân, không cần PySpark. Ra 12 hình 
 | KHLCNT sau dedupe | 802.186 (loại 2) |
 | Tỉ lệ join KHLCNT | 96,9% |
 | Bị loại vì không phải NSNN (`planType = KHAC`) | 145.560 |
-| **Gói thầu cuối cùng** | **1.108.989** (53 cột) |
+| **Gói thầu cuối cùng** | **1.108.989** (56 cột) |
 | Đã có kết quả (giá trúng) | 1.070.058 (96,5%) |
 | Có dấu hiệu vốn vay (heuristic) | 504 |
 | Tổng giá gói thầu | ≈ 3.488.140 tỷ đồng |
@@ -180,7 +195,7 @@ Tổng cộng ~13 phút trên máy cá nhân, không cần PySpark. Ra 12 hình 
 - **Hình thức:** Chỉ định thầu 74% số gói nhưng chỉ 12,2% tổng giá trị; Cạnh tranh 24%.
 - **Tiết kiệm:** 68,8% gói tiết kiệm < 1%; trung vị Cạnh tranh 1,9%, Chỉ định thầu 0,0%.
 - **Cạnh tranh:** trong đấu thầu cạnh tranh, 51,9% gói chỉ có 1 nhà thầu; tiết kiệm trung vị 0,7% (1 nhà thầu) so với 7,0% (≥ 2 nhà thầu).
-- **Tập trung:** 13,0% trong 30.352 bên mời thầu (≥ 5 gói) có HHI > 0,25.
+- **Tập trung:** 13,0% trong 30.839 bên mời thầu (≥ 5 gói) có HHI > 0,25. Nhà thầu có mặt trong nhiều gói trúng nhất: VNPT (3.506 gói, tính cả liên danh / trúng một phần).
 
 ### 3.3. Kiểm tra độ lệch dữ liệu ở các tháng gần đây (yêu cầu của `team-plan.md`)
 
@@ -215,25 +230,26 @@ Tỉ lệ gói có kết quả theo tháng đăng TBMT (tính từ `packages.par
 
 | Số thuật toán đồng thuận | Số gói |
 |---|---|
-| 0 | 922.724 |
-| 1 | 126.773 |
-| 2 | 14.762 |
-| 3 | **1.173** |
+| 0 | 921.590 |
+| 1 | 128.771 |
+| 2 | 14.168 |
+| 3 | **903** |
 
 | Cặp | Jaccard (gói bị gắn cờ) | Spearman (điểm) |
 |---|---|---|
-| Rule-based ↔ Isolation Forest | 0,059 | 0,077 |
-| Rule-based ↔ LOF | 0,019 | −0,063 |
-| Isolation Forest ↔ LOF | 0,108 | 0,297 |
+| Rule-based ↔ Isolation Forest | 0,058 | 0,072 |
+| Rule-based ↔ LOF | 0,017 | −0,076 |
+| Isolation Forest ↔ LOF | 0,095 | 0,276 |
 
-- Ba thuật toán **ít trùng nhau**: mỗi cái bắt một kiểu tín hiệu khác. Trong tập rule-based gắn cờ, 100% là gói có 1 nhà thầu; trong tập LOF gắn cờ, 72,5% là chỉ định thầu (so với 76,0% toàn bộ), nên LOF gần như không chọn theo tín hiệu cạnh tranh (nhiều khả năng bắt các gói có đặc trưng hiếm; chưa kiểm chứng).
-- Top 10 gói thầu (đồng thuận 3/3) đều thuộc **2 cặp bên mời thầu–nhà thầu**, mỗi cặp khoảng 15 gói của bên mời thầu đó trong 180 ngày, tỉ lệ giá trúng ≈ 99–100%. Chi tiết trong `reports/report_assets.md`, `reports/tables/anomaly_top.csv`.
+- Số liệu sau khi sửa ở Việc 17. So với lần chạy trước (1.173 gói đồng thuận 3/3): 596 gói có mặt ở cả hai lần; tập gắn cờ của từng thuật toán trùng 80,5% (rule-based), 83,6% (Isolation Forest), 64,4% (LOF). `repeat_winner` = 26,6% số gói.
+- Ba thuật toán **ít trùng nhau**: mỗi cái bắt một kiểu tín hiệu khác. Trong tập rule-based gắn cờ, 100% là gói có 1 nhà thầu; trong tập LOF gắn cờ, 74,6% là chỉ định thầu (so với 76,0% toàn bộ), nên LOF gần như không chọn theo tín hiệu cạnh tranh (nhiều khả năng bắt các gói có đặc trưng hiếm; chưa kiểm chứng).
+- Top 10 gói thầu (đồng thuận 3/3) đều thuộc **2 cặp bên mời thầu–nhà thầu** (không đổi so với lần chạy trước), mỗi cặp khoảng 15 gói của bên mời thầu đó trong 180 ngày, tỉ lệ giá trúng ≈ 99–100%. Chi tiết trong `reports/report_assets.md`, `reports/tables/anomaly_top.csv`.
 - ⚠️ Đây là **điểm bất thường thống kê**, không phải kết luận vi phạm. Bước *đối chiếu định tính với tin thanh tra/kiểm toán công khai* vẫn để trống (R5 bổ sung).
 
 ### 3.6. Tuỳ chọn — K-means và network
 
 - **K-means:** k tốt nhất = 3, silhouette 0,735. Hai cụm lớn: 233.043 gói (hàng hoá, cạnh tranh, tiết kiệm trung vị 1,9%) và 837.014 gói (tư vấn, 97,1% chỉ định thầu). **Cụm thứ 3 chỉ có 1 gói** (xem vấn đề #3).
-- **Network (Louvain):** 230.403 nút, 593.576 cạnh, 2.127 cộng đồng, trong đó 192 cộng đồng có ≥ 2 bên mời thầu. Nhiều cộng đồng "khép kín" (tỉ lệ khép kín 1,0), điển hình: 1 nhà thầu cung cấp cho nhiều trường học / chi cục cùng địa bàn.
+- **Network (Louvain):** 184.091 nút, 690.357 cạnh, 1.752 cộng đồng, trong đó 178 cộng đồng có ≥ 2 bên mời thầu (trước Việc 17: 230.403 nút, 593.576 cạnh; nút giảm vì chuỗi ghép và UUID không còn là nút riêng, cạnh tăng vì mỗi thành viên liên danh có cạnh riêng). Nhiều cộng đồng "khép kín" (tỉ lệ khép kín 1,0), điển hình: 1 nhà thầu cung cấp cho nhiều trường học / chi cục cùng địa bàn.
 
 ---
 
@@ -244,7 +260,7 @@ Tỉ lệ gói có kết quả theo tháng đăng TBMT (tính từ `packages.par
 | 1 | KQ bị thiếu ở 09–10/2026 (88,8% so với ~97%) | **Cao**, chặn dataset final | Xoá checkpoint của các ngày từ ~01/07/2026 trong `data/checkpoint.sqlite`, crawl lại với `--start/--end`; `dedupe_notices` tự giữ bản ở bước xa nhất. Sau đó chạy lại `clean` và kiểm tra lại bảng §3.3 |
 | 2 | Chưa mở rộng 24 → 48 tháng (D2 đợt 2) | Trung bình | Đổi `months_back: 48`, chạy lại `crawl`; checkpoint bỏ qua phần đã có (~4,2 ngày nữa, có thể tách 2 tiến trình theo `--sources`). Cân nhắc làm cùng lượt với #1 |
 | 3 | K-means có 1 gói với `tiet_kiem_pct ≈ −4,29×10¹²` làm hỏng cụm và đẩy silhouette lên 0,735 | Trung bình | Loại các gói bị gắn cờ outlier (`ty_le` ngoài [0,3; 1,2], `gia_trung_thau ≤ 0`) trước khi K-means; chạy lại và báo silhouette mới |
-| 4 | Tên nhà thầu còn hậu tố kiểu `(LOẠI HÌNH DOANH NGHIỆP: CÔNG TY TNHH)` (thấy ở top nhà thầu, 3.340 gói) | Trung bình | Chuẩn hoá tên nhà thầu trong `normalize.py`, ưu tiên khoá theo `ma_nha_thau_trung_thau` (MST) nếu có. Ảnh hưởng top nhà thầu, `repeat_winner`, network |
+| 4 | ~~Tên nhà thầu còn hậu tố kiểu `(LOẠI HÌNH DOANH NGHIỆP: CÔNG TY TNHH)` (thấy ở top nhà thầu, 3.340 gói)~~ | — | ✅ Đã sửa 12/10/2026 (chưa commit), xem Việc 17. Hậu tố chỉ là phần nhỏ; lỗi chính là `wins_in_window` gán lệch dòng |
 | 5 | Outlier giá chưa quyết định xử lý (2.450 gói giá trúng > giá gói; 106 gói giá ≤ 0) | Thấp–TB | Xác định đây là lỗi nhập liệu hay có thật; ghi quyết định vào `config.yaml` (`ratio_outlier_*`) |
 | 6 | Regression R² thấp (0,153), baseline trung vị thắng về MAE | Thấp | Thử `target: log_gia_trung`; thử phân loại "có tiết kiệm / không"; ghi rõ hạn chế (thiếu `thoi_gian_thuc_hien`, D4) |
 | 7 | Anomaly: 3 phương pháp ít đồng thuận; chưa có đối chiếu định tính | Thấp | R5 tìm vài vụ có tin thanh tra/kiểm toán công khai để đối chiếu; trình bày theo "tín hiệu" chứ không "vi phạm" |
@@ -273,7 +289,7 @@ $env:PTVN_CONTACT_EMAIL="ten@sis.hust.edu.vn"
 python run_pipeline.py crawl [--sources tbmt,kqlcnt,khlcnt] [--start YYYY-MM-DD --end YYYY-MM-DD]
 
 # Kiểm thử, không cần Internet
-python -m pytest                           # 27 passed
+python -m pytest                           # 50 passed
 ```
 
 ## 6. Lịch sử commit
